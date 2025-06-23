@@ -1,0 +1,20 @@
+from dataclasses import dataclass
+from typing import Any
+from TA.support.infra.database.idb_handler import IDbHandler
+from .base_repository import BaseRepository
+from ..domain.entities.base_entity import BaseEntity
+from ..domain.enums.status_enum import StatusEnum
+
+@dataclass
+class CRUDRepository (BaseRepository):
+    def __init__(self, db: IDbHandler, entity: Any):
+        super().__init__(db, entity)
+
+    def add(self, obj: BaseEntity) -> None:
+        obj.id = None
+        obj.status = StatusEnum.ATIVO
+        self._session.add(obj)
+        self._session.flush()
+
+    def delete(self, obj: BaseEntity) -> None:
+        obj.status = StatusEnum.LOGICAMENTE_DELETADO

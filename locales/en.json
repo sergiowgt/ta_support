@@ -1,0 +1,21 @@
+{
+    "validation.error.empty_field": "{field} não pode estar vazio",
+    "validation.error.max_length": "{field} não pode exceder {max} caracteres",
+    "validation.error.invalid_datetime": "{field} deve ser uma data/hora válida",
+    "validation.error.future_date": "{field} não pode ser uma data futura",
+    "validation.error.invalid_email": "{field} não é um e-mail válido",
+    "validation.error.invalid_phone": "{field} não é um telefone celular válido",
+    "validation.error.invalid_cpf": "{field} não é um cpf válido",
+    "validation.error.invalid_type": "{field} deve ser do tipo {type}",
+    "validation.error.positive_integer": "{field} deve ser um inteiro positivo",
+    "validation.error.exact_length": "{field} deve ter exatamente {exact} caracteres",
+    "validation.error.min_length": "{field} deve ter pelo menos {min} caracteres",
+    "validation.error.min_age": "{field} deve indicar idade mínima de {min} anos. Idade atual: {actual}",
+    "validation.error.max_age": "{field} deve indicar idade máxima de {max} anos. Idade atual: {actual}",
+    "validation.error.password_min_length": "{field} deve ter no mínimo {min} caracteres",
+    "validation.error.password_max_length": "{field} deve ter no máximo {max} caracteres",
+    "validation.error.password_numeric": "{field} deve conter pelo menos um número",
+    "validation.error.password_alpha": "{field} deve conter pelo menos uma letra",
+    "validation.error.password_uppercase": "{field} deve conter pelo menos uma letra maiúscula",
+    "validation.error.password_special": "{field} deve conter pelo menos um caractere especial"
+}

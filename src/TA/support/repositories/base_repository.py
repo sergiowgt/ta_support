@@ -1,40 +1,47 @@
 from dataclasses import dataclass
-from typing import Any, List
-from sqlalchemy.orm.session import Session
+from typing import Any, List, Optional
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from TA.support.infra.database.idb_handler import IDbHandler
 from .ibase_repository import IBaseRepository
 from ..domain.entities.base_entity import BaseEntity
 from ..domain.enums.status_enum import StatusEnum
 
 @dataclass
-class BaseRepository (IBaseRepository):
-    _session: Session = NotImplementedError
+class BaseRepository(IBaseRepository):
+    _session: AsyncSession = NotImplementedError
     _entity: BaseEntity = NotImplementedError
 
-    def __init__(self, db: IDbHandler, entity: BaseEntity):
-        self._session = db.get_session()
+    def __init__(self, session: AsyncSession, entity: BaseEntity):
+        self._session = session
         self._entity = entity
 
     def _make_query(self, id: int, only_active: bool = False) -> Any:
-        query = self._session.query(self._entity).filter_by(id = id)
-        if (only_active):
-            query = query.filter(self._entity.status == StatusEnum.ATIVO)
+        query = select(self._entity).where(self._entity.id == id)
+        if only_active:
+            query = query.where(self._entity.status == StatusEnum.ACTIVE)
         else:
-            query = query.filter(self._entity.status != StatusEnum.LOGICAMENTE_DELETADO)
-
+            query = query.where(self._entity.status != StatusEnum.LOGICALLY_DELETED)
         return query
 
-    def exists(self, id: int, only_active: bool = False) -> bool:
-        return any(self._make_query(id, only_active).all())
+    async def exists(self, id: int, only_active: bool = False) -> bool:
+        result = await self._session.execute(
+            self._make_query(id, only_active)
+        )
+        return result.scalars().first() is not None
 
-    def get(self, id: int, only_active: bool = False) -> BaseEntity:
-        return self._make_query(id, only_active).first()
+    async def get(self, id: int, only_active: bool = False) -> Optional[BaseEntity]:
+        result = await self._session.execute(
+            self._make_query(id, only_active)
+        )
+        return result.scalars().first()
 
-    def get_all(self, only_active: bool = False) -> List[BaseEntity]:
-        query = self._session.query(self._entity)
-        if (only_active):
-            query = query.filter(self._entity.status == StatusEnum.ATIVO)
+    async def get_all(self, only_active: bool = False) -> List[BaseEntity]:
+        query = select(self._entity)
+        if only_active:
+            query = query.where(self._entity.status == StatusEnum.ACTIVE)
         else:
-            query = query.filter(self._entity.status != StatusEnum.LOGICAMENTE_DELETADO)
-
-        return query.all()
+            query = query.where(self._entity.status != StatusEnum.LOGICALLY_DELETED)
+            
+        result = await self._session.execute(query)
+        return result.scalars().all()

@@ -1,7 +1,6 @@
-from enum import Enum
+from enum import IntEnum
 
-class StatusEnum(Enum):
+class StatusEnum(IntEnum):
+    LOGICALLY_DELETED = 0
     ACTIVE = 1
     INACTIVE = 2
-    LOGICALLY_DELETED = 0
-    

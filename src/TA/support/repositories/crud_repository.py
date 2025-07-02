@@ -6,15 +6,17 @@ from ..domain.entities.base_entity import BaseEntity
 from ..domain.enums.status_enum import StatusEnum
 
 @dataclass
-class CRUDRepository (BaseRepository):
+class CRUDRepository(BaseRepository):
     def __init__(self, db: IDbHandler, entity: Any):
         super().__init__(db, entity)
 
-    def add(self, obj: BaseEntity) -> None:
+    async def add(self, obj: BaseEntity) -> None:
         obj.id = None
-        obj.status = StatusEnum.ATIVO
+        obj.status = StatusEnum.ACTIVE
         self._session.add(obj)
-        self._session.flush()
+        await self._session.flush()  # Alterado para async
 
-    def delete(self, obj: BaseEntity) -> None:
-        obj.status = StatusEnum.LOGICAMENTE_DELETADO
+    async def delete(self, obj: BaseEntity) -> None:
+        obj.status = StatusEnum.LOGICALLY_DELETED
+        # Persistência imediata opcional:
+        # await self._session.flush()

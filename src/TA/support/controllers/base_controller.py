@@ -1,4 +1,4 @@
-from TA.support.infra.database.db_handler import DbHandler
+from TA.support.infra.database.async_db_handler import DbHandler
 from TA.support.infra.db_config.db_config import DbConfig
 
 class BaseController:

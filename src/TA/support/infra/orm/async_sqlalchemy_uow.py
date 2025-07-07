@@ -1,6 +1,6 @@
 # src/infra/orm/unit_of_work.py
 from sqlalchemy.ext.asyncio import AsyncSession
-from TA.support.domain.contracts.unit_of_work import IUnitOfWork
+from TA.support.domain.contracts.iunit_of_work import IUnitOfWork
 from TA.support.infra.database.async_db_handler import AsyncDbHandler
 
 class AsyncSqlAlchemyUnitOfWork(IUnitOfWork):

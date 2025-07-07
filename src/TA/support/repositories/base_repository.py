@@ -36,12 +36,12 @@ class BaseRepository(IBaseRepository):
         )
         return result.scalars().first()
 
-    async def get_all(self, only_active: bool = False) -> List[BaseEntity]:
+    async def get_all(self, only_active: bool = False, page=1, page_size=20) -> List[BaseEntity]:
         query = select(self._entity)
         if only_active:
             query = query.where(self._entity.status == StatusEnum.ACTIVE)
         else:
             query = query.where(self._entity.status != StatusEnum.LOGICALLY_DELETED)
-            
+        query = query.offset((page - 1) * page_size).limit(page_size)
         result = await self._session.execute(query)
         return result.scalars().all()

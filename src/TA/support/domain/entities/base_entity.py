@@ -6,16 +6,16 @@ from uuid import UUID, uuid4
 from TA.support.domain.enums.status_enum import StatusEnum
 from TA.support.validators_exceptions.domain_exception import DomainException
 from TA.support.i18n.message_provider import MessageProvider
-from TA.support.domain.entities.base_config_atributtes import NAME_FIELD  # Nova importação
+from TA.support.domain.entities.base_config_atributtes import CREATE_BY_FIELD, UPDATE_BY_FIELD
 
 @dataclass
 class BaseEntity:
     id: UUID = field(default_factory=uuid4, metadata={'display': 'UUID'})
     status: StatusEnum = field(default=StatusEnum.ACTIVE, metadata={'display': 'Status'})
     created_at: datetime = field(default_factory=datetime.now, metadata={'display': 'CreatedAt'})
-    created_by: str = field(default='', metadata={'display': 'CreatedBy', 'max_length': NAME_FIELD.max})
+    created_by: str = field(default='', metadata={'display': 'CreatedBy', 'max_length': CREATE_BY_FIELD.max})
     updated_at: Optional[datetime] = field(default=None, metadata={'display': 'UpdatedAt'})
-    updated_by: Optional[str] = field(default=None, metadata={'display': 'UpdatedBy', 'max_length': NAME_FIELD.max})
+    updated_by: Optional[str] = field(default=None, metadata={'display': 'UpdatedBy', 'max_length': UPDATE_BY_FIELD.max})
 
     def _get_display_name(self, property_name: str) -> str:
         for f in fields(self):

@@ -18,3 +18,16 @@ class NamedRepository(BaseRepository):
         )
         result = await self._session.execute(query)
         return result.scalars().first()
+    
+    async def get_all(self, only_active=True, name_like=None, page=1, page_size=20):
+        query = select(self._entity)
+        if only_active:
+            query = query.where(self._entity.status == StatusEnum.ACTIVE)
+        else:
+            query = query.where(self._entity.status != StatusEnum.LOGICALLY_DELETED)
+        if name_like:
+            query = query.where(self._entity.name.ilike(f"%{name_like}%"))
+        query = query.offset((page - 1) * page_size).limit(page_size)
+        result = await self._session.execute(query)
+        return result.scalars().all()
+

@@ -7,3 +7,8 @@ find . -name '*.pyc' -delete
 rm -rf .pytest_cache dist build
 
 # 
+for f in /Users/sergiosousa/TA.support/src/TA/support/domain/entities/*.py; do
+  echo "===== $f =====" >> resultado.txt
+  cat "$f" >> resultado.txt
+  echo "" >> resultado.txt
+done

@@ -6,6 +6,7 @@
     "validation.error.invalid_email": "{field} não é um e-mail válido",
     "validation.error.invalid_phone": "{field} não é um telefone celular válido",
     "validation.error.invalid_cpf": "{field} não é um CPF válido",
+    "validation.error.invalid_cnpj": "{field} não é um CNPJ válido",
     "validation.error.invalid_type": "{field} deve ser do tipo {type}",
     "validation.error.positive_integer": "{field} deve ser um inteiro positivo",
     "validation.error.exact_length": "{field} deve ter exatamente {exact} caracteres",
@@ -24,5 +25,5 @@
     "validation.error.password_special": "{field} deve conter pelo menos um caractere especial",
     "validation.error.invalid_enum_value": "{field} contém valor inválido: {value}",
     "validation.error.invalid_state_code": "{field} com código inválido: {value}",
-    "validation.error.invalid_uuid": "{field} deve ser um UUID válido"
+    "validation.error.invalid_uuid": "{field} deve ser um UUID válido",
 }

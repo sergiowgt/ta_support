@@ -4,6 +4,8 @@ import re
 from typing import Any, Optional
 from uuid import UUID
 
+from TA.support.domain.entities.base_config_atributtes import CNPJ_FIELD, CPF_FIELD
+from TA.support.domain.enums.state_code_enum import StateCodeEnum
 from TA.support.i18n.message_provider import MessageProvider
 from .domain_exception import DomainException
 from .password_validation_error import PasswordValidationError
@@ -150,7 +152,7 @@ class DomainValidator:
             )
 
     @classmethod
-    def validate_cpf(cls, value: str, field_name: str, exact_len: int = 11) -> None:
+    def validate_cpf(cls, value: str, field_name: str, exact_len: int = CPF_FIELD.exact) -> None:
             cls.string_required(value, field_name, exact_len, 0, 0)
             value = value.strip()
             regex = re.compile(r'^\d{11}$')
@@ -159,6 +161,16 @@ class DomainValidator:
                 MessageProvider.get_message("validation.error.invalid_cpf", {"field": field_name})
             )
 
+    @classmethod
+    def validate_cnpj(cls, value: str, field_name: str, exact_len: int = CNPJ_FIELD.exact) -> None:
+        cls.string_required(value, field_name, exact_len, 0, 0)
+        value = value.strip()
+        regex = re.compile(r'^\d{14}$')
+        DomainException.when(
+            re.fullmatch(regex, value) is None or not cls._cnpj_is_valid(value),
+            MessageProvider.get_message("validation.error.invalid_cnpj", {"field": field_name})
+        )
+    
     @staticmethod
     def _cpf_is_valid(cpf: str) -> bool:
         # Remove possíveis caracteres não numéricos
@@ -175,6 +187,30 @@ class DomainValidator:
                 return False
         return True
 
+    @staticmethod
+    def _cnpj_is_valid(cnpj: str) -> bool:
+        if len(cnpj) != 14 or cnpj in (c * 14 for c in "1234567890"):
+            return False
+
+        def calc_digit(cnpj, digit):
+            if digit == 1:
+                weights = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+                num = cnpj[:12]
+            else:
+                weights = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+                num = cnpj[:13]
+            total = sum(int(n) * w for n, w in zip(num, weights))
+            remainder = total % 11
+            return '0' if remainder < 2 else str(11 - remainder)
+
+        cnpj_numbers = re.sub(r'\D', '', cnpj)
+        if len(cnpj_numbers) != 14:
+            return False
+
+        digit1 = calc_digit(cnpj_numbers, 1)
+        digit2 = calc_digit(cnpj_numbers + digit1, 2)
+        return cnpj_numbers[-2:] == digit1 + digit2
+    
     @staticmethod
     def validate_id(value: int, field_name: str) -> None:
         DomainException.when(
@@ -282,6 +318,24 @@ class DomainValidator:
             raise DomainException(
                 MessageProvider.get_message(
                     custom_message_key or "validation.error.invalid_enum_value",
+                    {"field": field_name, "value": value}
+                )
+            )
+        
+    @classmethod
+    def validate_state_code(cls, value: str, field_name: str) -> None:
+        if not value or not isinstance(value, str) or len(value) != 2:
+            raise DomainException(
+                MessageProvider.get_message(
+                    "validation.error.invalid_state_code",
+                    {"field": field_name, "value": value}
+                )
+            )
+        # Valida se o valor está no Enum
+        if value not in StateCodeEnum.__members__ and value not in StateCodeEnum._value2member_map_:
+            raise DomainException(
+                MessageProvider.get_message(
+                    "validation.error.invalid_state_code",
                     {"field": field_name, "value": value}
                 )
             )

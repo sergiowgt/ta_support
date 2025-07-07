@@ -4,7 +4,7 @@ from TA.support.domain.entities.base_config_atributtes import NAME_FIELD
 
 @dataclass
 class NamedBaseEntity(BaseEntity):
-    name: str = field(default='', metadata={'display': 'Name', 'max_length': NAME_FIELD.max})
+    name: str = field(default='', metadata={'display': 'Name', 'max_length': NAME_FIELD.max, 'unique': True})
 
     def validate(self):
         super().validate()

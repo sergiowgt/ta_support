@@ -34,15 +34,15 @@ class JWTHandler:
             )
 
     @staticmethod
-    async def verify_token(token: str = Depends(oauth2_scheme)) -> str:
+    async def verify_token(token: str = Depends(oauth2_scheme), claim:str="EMAIL") -> str:
         payload = JWTHandler.decode_token(token)
-        user_id = payload.get("sub")  # Obtém o identificador do usuário (sub)
+        claim_value = payload.get(claim)  
         
-        if not user_id:
+        if not claim_value:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token: missing 'sub' field",
+                detail=f"Invalid token: missing '{claim}' field",
                 headers={"WWW-Authenticate": "Bearer"}
             )
         
-        return user_id  # Retorna o ID ou email do usuário autenticado
+        return claim_value 

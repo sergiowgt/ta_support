@@ -12,3 +12,5 @@ for f in /Users/sergiosousa/TA.support/src/TA/support/domain/entities/*.py; do
   cat "$f" >> resultado.txt
   echo "" >> resultado.txt
 done
+
+find src -type f -name '*.py' -exec sh -c 'echo "# Arquivo: {}"; cat {}; echo; echo' \; > codigo_python.txt

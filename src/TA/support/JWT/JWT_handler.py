@@ -4,6 +4,11 @@ from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
 from .JWT_config import JWTConfig
 
+JWT_CLAIMS = {
+    "USER_ID": "user_id",
+    "EMAIL": "sub",
+}
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/")
 
 class JWTHandler:
@@ -34,15 +39,15 @@ class JWTHandler:
             )
 
     @staticmethod
-    async def verify_token(token: str = Depends(oauth2_scheme), claim:str="EMAIL") -> str:
-        payload = JWTHandler.decode_token(token)
-        claim_value = payload.get(claim)  
-        
-        if not claim_value:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail=f"Invalid token: missing '{claim}' field",
-                headers={"WWW-Authenticate": "Bearer"}
-            )
-        
-        return claim_value 
+    def get_claim_dependency(claim_id: str):
+        async def dependency(token: str = Depends(oauth2_scheme)):
+            payload = JWTHandler.decode_token(token)
+            claim_value = payload.get(claim_id)
+            if not claim_value:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail=f"Invalid token: missing '{claim_id}' field",
+                    headers={"WWW-Authenticate": "Bearer"}
+                )
+            return claim_value 
+        return dependency

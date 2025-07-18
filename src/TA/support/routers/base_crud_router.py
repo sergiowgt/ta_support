@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status, Query, Response
 from typing import Type, Union, Callable
 from uuid import UUID
-from TA.support.JWT.JWT_handler import JWTHandler
+from TA.support.JWT.JWT_handler import JWTHandler, JWT_CLAIMS
 
 class BaseCrudRouter:
     def __init__(
@@ -19,7 +19,7 @@ class BaseCrudRouter:
         self.router = APIRouter(
             prefix=prefix,
             tags=tags,
-            dependencies=[Depends(JWTHandler.verify_token)]
+            dependencies=[Depends(JWTHandler.get_claim_dependency(JWT_CLAIMS["EMAIL"]))]
         )
 
         self.service_cls = service_cls
@@ -36,7 +36,7 @@ class BaseCrudRouter:
         async def create(
             create_data: self.create_schema, 
             uow=Depends(self.get_async_uow),
-            created_by: str = Depends(JWTHandler.verify_token)
+            created_by: str = Depends(JWTHandler.get_claim_dependency(JWT_CLAIMS["EMAIL"]))
         ):
             service = self.service_cls(uow)
             entity = await service.create(create_data, created_by=created_by)
@@ -58,7 +58,7 @@ class BaseCrudRouter:
         async def activate(
             id: UUID, 
             uow=Depends(self.get_async_uow),
-            updated_by: str = Depends(JWTHandler.verify_token)
+            updated_by: str = Depends(JWTHandler.get_claim_dependency(JWT_CLAIMS["EMAIL"]))
         ):
             service = self.service_cls(uow)
             await service.activate(id, updated_by=updated_by)
@@ -68,7 +68,7 @@ class BaseCrudRouter:
         async def inactivate(
             id: UUID, 
             uow=Depends(self.get_async_uow),
-            updated_by: str = Depends(JWTHandler.verify_token)
+            updated_by: str = Depends(JWTHandler.get_claim_dependency(JWT_CLAIMS["EMAIL"]))
         ):
             service = self.service_cls(uow)
             await service.inactivate(id, updated_by=updated_by)
@@ -78,7 +78,7 @@ class BaseCrudRouter:
         async def delete(
             id: UUID, 
             uow=Depends(self.get_async_uow),
-            updated_by: str = Depends(JWTHandler.verify_token)):
+            updated_by: str = Depends(JWTHandler.get_claim_dependency(JWT_CLAIMS["EMAIL"]))):
             service = self.service_cls(uow)
             await service.delete(id, updated_by=updated_by)
             return Response(status_code=status.HTTP_200_OK)
@@ -87,7 +87,7 @@ class BaseCrudRouter:
         async def update(
             id: UUID, 
             update_data: self.update_schema, 
-            updated_by: str = Depends(JWTHandler.verify_token),
+            updated_by: str = Depends(JWTHandler.get_claim_dependency(JWT_CLAIMS["EMAIL"])),
             uow=Depends(self.get_async_uow)
         ):
             service = self.service_cls(uow)

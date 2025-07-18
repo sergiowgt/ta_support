@@ -98,7 +98,7 @@ class GenericService(IService):
                 })
                 raise BusinessRuleException(msg)
             
-            self._validate_childs(id)
+            await self._validate_childs(id)
                     
             # prepara a exclusao
             entity.status = StatusEnum.LOGICALLY_DELETED

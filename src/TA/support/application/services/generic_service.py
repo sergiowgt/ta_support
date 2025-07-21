@@ -34,17 +34,6 @@ class GenericService(IService):
             repo = self.repo_cls(self.uow.session)
             return await repo.get_all(only_active=only_active)
 
-    async def _execute_insert(self, entity, repo):
-        entity.validate()
-        await repo.add(entity)
-        await self.uow.commit()
-        return entity
-    
-    async def _execute_update(self, entity):
-        entity.updated_at = datetime.now()
-        entity.validate()
-        await self.uow.commit()
-    
     async def _validate_childs(self, id: UUID):
         ...
             
@@ -64,8 +53,11 @@ class GenericService(IService):
             # prepara a entidade para insert
             entity = self.entity_cls(**data.model_dump(), created_by=created_by)
 
-            # insere
-            return await self._execute_insert(entity, repo)
+            #insert
+            await repo.add(entity, created_by)
+            await self.uow.commit()
+            return entity
+    
         
     async def update(self, id: UUID, data, updated_by: str) -> None:
         async with self.uow:
@@ -79,12 +71,11 @@ class GenericService(IService):
             await self._validate_fk(data)
 
              # Prepara o update
-            entity.updated_by = updated_by
             for field, value in data.model_dump().items():
                 setattr(entity, field, value)
                  
             # atualiza
-            await self._execute_update(entity)
+            await repo.update(entity, updated_by)
             return 
             
     async def delete(self, id: UUID, updated_by: str) -> None:
@@ -100,12 +91,8 @@ class GenericService(IService):
             
             await self._validate_childs(id)
                     
-            # prepara a exclusao
-            entity.status = StatusEnum.LOGICALLY_DELETED
-            entity.updated_by = updated_by
-
             # exclui
-            await self._execute_update(entity)
+            await repo.delete(entity, updated_by)
 
     async def activate(self, id: UUID, updated_by: str) -> None:
         async with self.uow:
@@ -118,12 +105,9 @@ class GenericService(IService):
                 })
                 raise BusinessRuleException(msg)
             
-            # prepara o activate
-            entity.updated_by = updated_by
-            entity.status = StatusEnum.ACTIVE
-            
             # atualiza
-            await self._execute_update(entity)
+            entity.status = StatusEnum.ACTIVE
+            await repo.update(entity, updated_by)
             
     async def inactivate(self, id: UUID, updated_by: str) -> None:
         async with self.uow:
@@ -136,9 +120,6 @@ class GenericService(IService):
                 })
                 raise BusinessRuleException(msg)
             
-            # prepara o inactivate
-            entity.updated_by = updated_by
-            entity.status = StatusEnum.INACTIVE
-
             # atualiza
-            await self._execute_update(entity)
+            entity.status = StatusEnum.INACTIVE
+            await repo.update(entity, updated_by)

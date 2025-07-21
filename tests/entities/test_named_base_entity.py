@@ -9,7 +9,7 @@ from TA.support.i18n.message_provider import MessageProvider
 class TestNamedBaseEntity:
     @classmethod
     def setup_class(cls): 
-        MessageProvider._load_locales(Path('/Users/sergiosousa/TA.support/locales'))
+        MessageProvider._load_locales(Path('/Users/sergiosousa/work/Lab/DentalInclusiva/src/locales'))
         
     def setup_method(self): MessageProvider.set_language("pt_BR")
 
@@ -24,4 +24,4 @@ class TestNamedBaseEntity:
     def test_name_too_long(self):
         with pytest.raises(DomainException) as exc:
             NamedBaseEntity(name="A"*101, created_by="admin", created_at=datetime.now()).validate()
-        assert MessageProvider.get_message("validation.error.max_length", {"field": "Name", "max": NAME_FIELD.max}) in str(exc.value)
+        assert MessageProvider.get_message("validation.error.max_length", {"field": "Name", "max": NAME_FIELD.maxlen}) in str(exc.value)

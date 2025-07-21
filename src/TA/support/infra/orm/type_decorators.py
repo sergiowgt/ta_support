@@ -1,13 +1,13 @@
 
 import uuid
 from TA.support.domain.entities.base_config_atributtes import (
-    CNPJ_FIELD, NAME_FIELD, UUID_FIELD, CREATE_BY_FIELD, UPDATE_BY_FIELD,
+    CNPJ_FIELD, NAME_FIELD, UUID_FIELD, CREATED_BY_FIELD, UPDATED_BY_FIELD,
     STATECODE_FIELD, CPF_FIELD
 )
 from sqlalchemy import VARCHAR, TypeDecorator
 
 class UUIDType(TypeDecorator):
-    impl = VARCHAR(UUID_FIELD.exact)
+    impl = VARCHAR(UUID_FIELD.maxlen)
 
     def process_bind_param(self, value, dialect):
             if value is None:
@@ -24,20 +24,20 @@ class UUIDType(TypeDecorator):
         return value
 
 class NameType(TypeDecorator):
-    impl = VARCHAR(NAME_FIELD.max)
+    impl = VARCHAR(NAME_FIELD.maxlen)
 
 class CreatedByType(TypeDecorator):
-    impl = VARCHAR(CREATE_BY_FIELD.max)
+    impl = VARCHAR(CREATED_BY_FIELD.maxlen)
 
 class UpdatedByType(TypeDecorator):
-    impl = VARCHAR(UPDATE_BY_FIELD.max)
+    impl = VARCHAR(UPDATED_BY_FIELD.maxlen)
 
 class StateCodeType(TypeDecorator):
-    impl = VARCHAR(STATECODE_FIELD.exact)
+    impl = VARCHAR(STATECODE_FIELD.maxlen)
 
 class CPFType(TypeDecorator):
-    impl = VARCHAR(CPF_FIELD.exact)
+    impl = VARCHAR(CPF_FIELD.maxlen)
 
 class CNPJType(TypeDecorator):
-    impl = VARCHAR(CNPJ_FIELD.exact)
+    impl = VARCHAR(CNPJ_FIELD.maxlen)
 

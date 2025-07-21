@@ -9,7 +9,7 @@ from TA.support.i18n.message_provider import MessageProvider
 class TestBaseEntity:
     @classmethod
     def setup_class(cls): 
-        MessageProvider._load_locales(Path('/Users/sergiosousa/TA.support/locales'))
+        MessageProvider._load_locales(Path('/Users/sergiosousa/work/Lab/DentalInclusiva/src/locales'))
 
     def setup_method(self): MessageProvider.set_language("pt_BR")
 
@@ -23,14 +23,16 @@ class TestBaseEntity:
 
     def test_updated_by_without_updated_at(self):
         with pytest.raises(DomainException) as exc: BaseEntity(status=StatusEnum.ACTIVE, created_at=datetime.now(), created_by="admin", updated_by="user").validate()
-        assert MessageProvider.get_message("validation.error.invalid_datetime", {"field": "UpdatedAt"}) in str(exc.value)
+        assert MessageProvider.get_message("validation.error.empty_field", {"field": "UpdatedAt"}) in str(exc.value)
 
     def test_updated_at_without_updated_by(self):
         with pytest.raises(DomainException) as exc: BaseEntity(status=StatusEnum.ACTIVE, created_at=datetime.now(), created_by="admin", updated_at=datetime.now()).validate()
         assert MessageProvider.get_message("validation.error.empty_field", {"field": "UpdatedBy"}) in str(exc.value)
 
     def test_without_updated_by_and_without_updated_at(self):
-        BaseEntity(id="123", status=StatusEnum.ACTIVE, created_at=datetime.now(), created_by="admin").validate()
+        with pytest.raises(DomainException) as exc: 
+            BaseEntity(status=StatusEnum.ACTIVE, created_at=datetime.now(), created_by="admin", updated_by="teste").validate()
+        assert MessageProvider.get_message("validation.error.empty_field", {"field": "UpdatedAt"}) in str(exc.value)
 
     def test_valid(self):
-        BaseEntity(id="123", status=StatusEnum.ACTIVE, created_at=datetime.now(), created_by="admin", updated_at=datetime.now(), updated_by="xxx").validate()
+        BaseEntity(status=StatusEnum.ACTIVE, created_at=datetime.now(), created_by="admin", updated_at=datetime.now(), updated_by="xxx").validate()

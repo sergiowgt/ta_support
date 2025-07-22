@@ -129,12 +129,18 @@ class DomainValidator:
 
     @classmethod
     def validate_datetime(self, value, field_name, field_config):
+        if not value:
+            raise DomainException(
+                MessageProvider.get_message("validation.error.empty_field", {"field": field_name})
+        )
+        
         if not isinstance(value, datetime):
             msg_key = "validation.error.invalid_datetime"
             raise DomainException(
                 MessageProvider.get_message(msg_key, {"field": field_name})
             )
 
+        
     @classmethod
     def validate_cell_phone(cls, value, field_name, field_config):
         # Valida tipo, obrigatoriedade e tamanho exato conforme field_config

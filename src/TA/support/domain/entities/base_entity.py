@@ -44,7 +44,7 @@ class BaseEntity:
                 return f.metadata.get('display', property_name)
         return property_name
 
-    def validate_datetime(self, property_name: str, allow_future: bool = False, custom_message_key: Optional[str] = None):
+    """ def validate_datetime(self, property_name: str, allow_future: bool = False, custom_message_key: Optional[str] = None):
         value = getattr(self, property_name)
         display_name = self._get_display_name(property_name)
 
@@ -63,7 +63,7 @@ class BaseEntity:
             msg_key = custom_message_key or "validation.error.future_date"
             raise DomainException(
                 MessageProvider.get_message(msg_key, {"field": display_name})
-            )
+            ) """
 
     def validate(self) -> bool:
         for f in fields(self):
@@ -97,12 +97,12 @@ class BaseEntity:
                     pass
 
         if self.updated_at:
-            self.validate_datetime('updated_at')
+            DomainValidator.validate_datetime(self.updated_at, self._get_display_name('updated_at'), UPDATED_AT_FIELD)
             DomainValidator.string_required(self.updated_by, self._get_display_name('updated_by'), UPDATED_BY_FIELD)
 
         if self.updated_by:
             DomainValidator.string_required(self.updated_by, self._get_display_name('updated_by'), UPDATED_BY_FIELD)
-            self.validate_datetime('updated_at')
+            DomainValidator.validate_datetime(self.updated_at, self._get_display_name('updated_at'), UPDATED_AT_FIELD)
         
         return True
 

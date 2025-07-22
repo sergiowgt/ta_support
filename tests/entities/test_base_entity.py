@@ -19,11 +19,19 @@ class TestBaseEntity:
 
     def test_created_at_empty(self):
         with pytest.raises(DomainException) as exc: BaseEntity( status=StatusEnum.ACTIVE, created_by="xxx", created_at=None).validate()
+        assert MessageProvider.get_message("validation.error.empty_field", {"field": "CreatedAt"}) in str(exc.value)
+
+    def test_created_at_invalid(self):
+        with pytest.raises(DomainException) as exc: BaseEntity( status=StatusEnum.ACTIVE, created_by="xxx", created_at="1234").validate()
         assert MessageProvider.get_message("validation.error.invalid_datetime", {"field": "CreatedAt"}) in str(exc.value)
 
     def test_updated_by_without_updated_at(self):
         with pytest.raises(DomainException) as exc: BaseEntity(status=StatusEnum.ACTIVE, created_at=datetime.now(), created_by="admin", updated_by="user").validate()
         assert MessageProvider.get_message("validation.error.empty_field", {"field": "UpdatedAt"}) in str(exc.value)
+
+    def test_updated_by_invalid_updated_at(self):
+        with pytest.raises(DomainException) as exc: BaseEntity(status=StatusEnum.ACTIVE, created_at=datetime.now(), created_by="admin", updated_by="user", updated_at="123").validate()
+        assert MessageProvider.get_message("validation.error.invalid_datetime", {"field": "UpdatedAt"}) in str(exc.value)
 
     def test_updated_at_without_updated_by(self):
         with pytest.raises(DomainException) as exc: BaseEntity(status=StatusEnum.ACTIVE, created_at=datetime.now(), created_by="admin", updated_at=datetime.now()).validate()

@@ -1,5 +1,5 @@
 from dataclasses import fields
-from TA.support.validators_exceptions import BusinessRuleException
+from TA.support.application.exceptions.business_rule_exception import BusinessRuleException
 from TA.support.i18n.message_provider import MessageProvider
 from sqlalchemy import select
 

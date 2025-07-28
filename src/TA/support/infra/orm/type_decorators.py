@@ -1,7 +1,7 @@
 
 import uuid
-from TA.support.domain.entities.base_config_atributtes import (
-    CNPJ_FIELD, NAME_FIELD, UUID_FIELD, CREATED_BY_FIELD, UPDATED_BY_FIELD,
+from TA.support.infra.validators.field_presets import (
+    CNPJ_FIELD, NAME_FIELD, UUID_FIELD, DATED_BY_FIELD, DATED_BY_FIELD,
     STATECODE_FIELD, CPF_FIELD
 )
 from sqlalchemy import VARCHAR, TypeDecorator
@@ -24,20 +24,20 @@ class UUIDType(TypeDecorator):
         return value
 
 class NameType(TypeDecorator):
-    impl = VARCHAR(NAME_FIELD.maxlen)
+    impl = VARCHAR(NAME_FIELD.max_len)
 
 class CreatedByType(TypeDecorator):
-    impl = VARCHAR(CREATED_BY_FIELD.maxlen)
+    impl = VARCHAR(DATED_BY_FIELD.max_len)
 
 class UpdatedByType(TypeDecorator):
-    impl = VARCHAR(UPDATED_BY_FIELD.maxlen)
+    impl = VARCHAR(DATED_BY_FIELD.max_len)
 
 class StateCodeType(TypeDecorator):
-    impl = VARCHAR(STATECODE_FIELD.maxlen)
+    impl = VARCHAR(STATECODE_FIELD.max_len)
 
 class CPFType(TypeDecorator):
-    impl = VARCHAR(CPF_FIELD.maxlen)
+    impl = VARCHAR(CPF_FIELD.max_len)
 
 class CNPJType(TypeDecorator):
-    impl = VARCHAR(CNPJ_FIELD.maxlen)
+    impl = VARCHAR(CNPJ_FIELD.max_len)
 

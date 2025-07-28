@@ -1,9 +1,9 @@
 from pathlib import Path
 import pytest
 from datetime import datetime
-from TA.support.domain.entities.base_config_atributtes import NAME_FIELD
+from TA.support.infra.validators.field_presets import NAME_FIELD
 from TA.support.domain.entities.named_base_entity import NamedBaseEntity
-from TA.support.validators_exceptions.domain_exception import DomainException
+from TA.support.domain.exceptions.domain_exception import DomainException
 from TA.support.i18n.message_provider import MessageProvider
 
 class TestNamedBaseEntity:

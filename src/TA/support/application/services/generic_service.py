@@ -4,7 +4,7 @@ from uuid import UUID
 
 from TA.support.application.services.service_utils import validate_uniqueness
 from TA.support.domain.contracts.iservice import IService
-from TA.support.validators_exceptions import BusinessRuleException
+from TA.support.application.exceptions.business_rule_exception import BusinessRuleException
 from TA.support.i18n.message_provider import MessageProvider
 from TA.support.domain.enums.status_enum import StatusEnum
 

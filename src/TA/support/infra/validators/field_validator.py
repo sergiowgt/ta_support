@@ -1,21 +1,16 @@
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 import re
-from typing import Any, Optional
 from uuid import UUID
-
-from TA.support.domain.entities.base_config_atributtes import CNPJ_FIELD, CPF_FIELD
 from TA.support.domain.enums.state_code_enum import StateCodeEnum
+from TA.support.domain.enums.status_enum import StatusEnum
 from TA.support.i18n.message_provider import MessageProvider
-from .domain_exception import DomainException
-from .password_validation_error import PasswordValidationError
 from dateutil.relativedelta import relativedelta
+from TA.support.infra.validators.field_validator_exception import FieldValidatorException
 
-class DomainValidator:
-
+class FieldValidator:
     @staticmethod
     def _cpf_is_valid(cpf: str) -> bool:
-        # Remove possíveis caracteres não numéricos
         cpf = ''.join(filter(str.isdigit, cpf))
         if len(cpf) != 11 or cpf == cpf[0] * 11:
             return False
@@ -54,64 +49,63 @@ class DomainValidator:
         return cnpj_numbers[-2:] == digit1 + digit2
     
     @staticmethod
-    def string_required(value, field_name, field_config):
+    def validate_string(value, display_name, field_config):
         if not value:
-            raise DomainException(
-                MessageProvider.get_message("validation.error.empty_field", {"field": field_name})
+            raise FieldValidatorException(
+                MessageProvider.get_message("validation.error.empty_field", {"field": display_name})
         )
         
-        # Checagem: tipo
-        DomainException.when(
+        FieldValidatorException.when(
             not isinstance(value, field_config.type),
             MessageProvider.get_message(
                 "validation.error.invalid_type",
-                {"field": field_name, "type": field_config.type.__name__}
+                {"field": display_name, "type": field_config.type.__name__}
             )
         )
         value = value.strip() if value is not None else ""
 
         # Preenchimento obrigatório
-        DomainException.when(
+        FieldValidatorException.when(
             value == "",
             MessageProvider.get_message(
                 "validation.error.empty_field",
-                {"field": field_name}
+                {"field": display_name}
             )
         )
 
         # Tamanho (exato ou mínimo/máximo)
-        min_len = getattr(field_config, "minlen", 0)
-        max_len = getattr(field_config, "maxlen", 0)
+        min_len = getattr(field_config, "min_len", 0)
+        max_len = getattr(field_config, "max_len", 0)
 
         if min_len and max_len and min_len == max_len:
-            DomainException.when(
+            FieldValidatorException.when(
                 len(value) != min_len,
                 MessageProvider.get_message(
                     "validation.error.exact_length",
-                    {"field": field_name, "exact": min_len}
+                    {"field": display_name, "exact": min_len}
                 )
             )
         else:
             if min_len:
-                DomainException.when(
+                FieldValidatorException.when(
                     len(value) < min_len,
                     MessageProvider.get_message(
                         "validation.error.min_length",
-                        {"field": field_name, "min": min_len}
+                        {"field": display_name, "min": min_len}
                     )
                 )
             if max_len:
-                DomainException.when(
+                FieldValidatorException.when(
                     len(value) > max_len,
                     MessageProvider.get_message(
                         "validation.error.max_length",
-                        {"field": field_name, "max": max_len}
+                        {"field": display_name, "max": max_len}
                     )
                 )
 
     @classmethod
-    def validate_email(cls, value, field_name, field_config):
-        cls.string_required(value, field_name, field_config)
+    def validate_email(cls, value, display_name, field_config):
+        cls.validate_string(value, display_name, field_config)
         value = value.strip()
 
         # Expressão regular robusta e case-insensitive
@@ -119,221 +113,220 @@ class DomainValidator:
             r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)",
             re.IGNORECASE
         )
-        DomainException.when(
+        FieldValidatorException.when(
             re.fullmatch(regex, value) is None,
             MessageProvider.get_message(
                 "validation.error.invalid_email",
-                {"field": field_name}
+                {"field": display_name}
             )
         )
 
     @classmethod
-    def validate_datetime(self, value, field_name, field_config):
+    def validate_datetime(self, value, display_name, field_config):
         if not value:
-            raise DomainException(
-                MessageProvider.get_message("validation.error.empty_field", {"field": field_name})
+            raise FieldValidatorException(
+                MessageProvider.get_message("validation.error.empty_field", {"field": display_name})
         )
         
         if not isinstance(value, datetime):
             msg_key = "validation.error.invalid_datetime"
-            raise DomainException(
-                MessageProvider.get_message(msg_key, {"field": field_name})
+            raise FieldValidatorException(
+                MessageProvider.get_message(msg_key, {"field": display_name})
             )
 
-        
     @classmethod
-    def validate_cell_phone(cls, value, field_name, field_config):
-        # Valida tipo, obrigatoriedade e tamanho exato conforme field_config
-        cls.string_required(value, field_name, field_config)
+    def validate_cell_phone(cls, value, display_name, field_config):
+        cls.validate_string(value, display_name, field_config)
         value = value.strip()
 
         regex = re.compile(r'^(\+?55)?([1-9]{2})9[0-9]{8}$')
-        DomainException.when(
+        FieldValidatorException.when(
             re.fullmatch(regex, value) is None,
             MessageProvider.get_message(
                 "validation.error.invalid_phone",
-                {"field": field_name}
+                {"field": display_name}
             )
         )
 
     @classmethod
-    def validate_decimal(cls, value, field_name, field_config):
+    def validate_decimal(cls, value, display_name, field_config):
         # Conversão para decimal (tipo correto é responsabilidade desse método)
         try:
             decimal_value = value if isinstance(value, Decimal) else Decimal(str(value))
         except (InvalidOperation, TypeError, ValueError):
-            raise DomainException(
+            raise FieldValidatorException(
                 MessageProvider.get_message(
                     "validation.error.invalid_type",
-                    {"field": field_name, "type": "Decimal"}
+                    {"field": display_name, "type": "Decimal"}
                 )
             )
         
         # Limites a partir do config
-        min_value = getattr(field_config, "minlen", None)
-        max_value = getattr(field_config, "maxlen", None)
+        min_value = getattr(field_config, "min_len", None)
+        max_value = getattr(field_config, "max_len", None)
 
         # Validação mínima
         if min_value is not None and min_value != 0 and decimal_value < Decimal(str(min_value)):
-            raise DomainException(
+            raise FieldValidatorException(
                 MessageProvider.get_message(
                     "validation.error.decimal.min_value",
-                    {"field": field_name, "min": min_value, "actual": decimal_value}
+                    {"field": display_name, "min": min_value, "actual": decimal_value}
                 )
             )
 
         # Validação máxima
         if max_value is not None and max_value != 0 and decimal_value > Decimal(str(max_value)):
-            raise DomainException(
+            raise FieldValidatorException(
                 MessageProvider.get_message(
                     "validation.error.decimal.max_value",
-                    {"field": field_name, "max": max_value, "actual": decimal_value}
+                    {"field": display_name, "max": max_value, "actual": decimal_value}
                 )
             )
 
     @classmethod
-    def validate_integer(value, field_name, field_config):
+    def validate_integer(cls,value, display_name, field_config):
         # Tenta converter para inteiro
         try:
             int_value = value if isinstance(value, int) else int(value)
         except (TypeError, ValueError):
-            raise DomainException(
+            raise FieldValidatorException(
                 MessageProvider.get_message(
                     "validation.error.invalid_type",
-                    {"field": field_name, "type": "integer"}
+                    {"field": display_name, "type": "integer"}
                 )
             )
         
         # Limites extraídos do config
-        min_value = getattr(field_config, "minlen", None)
-        max_value = getattr(field_config, "maxlen", None)
+        min_value = getattr(field_config, "min_len", None)
+        max_value = getattr(field_config, "max_len", None)
 
         # Observa: ignore limites quando None ou 0 (sem restrição)
         if min_value is not None and min_value != 0 and int_value < min_value:
-            raise DomainException(
+            raise FieldValidatorException(
                 MessageProvider.get_message(
                     "validation.error.integer.min_value",
-                    {"field": field_name, "min": min_value, "actual": int_value}
+                    {"field": display_name, "min": min_value, "actual": int_value}
                 )
             )
         if max_value is not None and max_value != 0 and int_value > max_value:
-            raise DomainException(
+            raise FieldValidatorException(
                 MessageProvider.get_message(
                     "validation.error.integer.max_value",
-                    {"field": field_name, "max": max_value, "actual": int_value}
+                    {"field": display_name, "max": max_value, "actual": int_value}
             )
         )
+
     @classmethod
-    def validate_cpf(cls, value: str, field_name: str, field_config) -> None:
-            cls.string_required(value, field_name, field_config)
+    def validate_cpf(cls, value: str, display_name: str, field_config) -> None:
+            cls.validate_string(value, display_name, field_config)
             value = value.strip()
             regex = re.compile(r'^\d{11}$')
-            DomainException.when(
+            FieldValidatorException.when(
                 re.fullmatch(regex, value) is None or not cls._cpf_is_valid(value),
-                MessageProvider.get_message("validation.error.invalid_cpf", {"field": field_name})
+                MessageProvider.get_message("validation.error.invalid_cpf", {"field": display_name})
             )
 
     @classmethod
-    def validate_cnpj(cls, value, field_name, field_config):
+    def validate_cnpj(cls, value, display_name, field_config):
         # Validação de tipo, obrigatoriedade e tamanho exato conforme config
-        cls.string_required(value, field_name, field_config)
+        cls.validate_string(value, display_name, field_config)
         value = value.strip()
 
         # Regex: apenas dígitos, exatamente 14 caracteres
         regex = re.compile(r'^\d{14}$')
-        DomainException.when(
+        FieldValidatorException.when(
             re.fullmatch(regex, value) is None or not cls._cnpj_is_valid(value),
             MessageProvider.get_message(
                 "validation.error.invalid_cnpj",
-                {"field": field_name}
-            )
-        )
-    
-    @staticmethod
-    def validate_uuid(value, field_name, field_config=None):
-        DomainException.when(
-            not isinstance(value, UUID),
-            MessageProvider.get_message(
-                "validation.error.invalid_type",
-                {"field": field_name, "type": "UUID"}
-            )
-        )
-
-        # Verifica se o UUID é vazio/nulo (UUID all zero)
-        DomainException.when(
-            value is None or value.int == 0,
-            MessageProvider.get_message(
-                "validation.error.invalid_uuid",
-                {"field": field_name}
+                {"field": display_name}
             )
         )
    
     @staticmethod
-    def validate_birth_date(value, field_name, field_config):
+    def validate_uuid(value, display_name, field_config=None):
+        FieldValidatorException.when(
+            not isinstance(value, UUID),
+            MessageProvider.get_message(
+                "validation.error.invalid_type",
+                {"field": display_name, "type": "UUID"}
+            )
+        )
+
+        # Verifica se o UUID é vazio/nulo (UUID all zero)
+        FieldValidatorException.when(
+            value is None or value.int == 0,
+            MessageProvider.get_message(
+                "validation.error.invalid_uuid",
+                {"field": display_name}
+            )
+        )
+   
+    @staticmethod
+    def validate_birth_date(value, display_name, field_config):
         # Checagem de tipo
-        DomainException.when(
+        FieldValidatorException.when(
             not isinstance(value, date),
             MessageProvider.get_message(
                 "validation.error.invalid_datetime",
-                {"field": field_name}
+                {"field": display_name}
             )
         )
 
         today = date.today()
         # Não aceita data futura
-        DomainException.when(
+        FieldValidatorException.when(
             value > today,
             MessageProvider.get_message(
                 "validation.error.future_date",
-                {"field": field_name}
+                {"field": display_name}
             )
         )
 
         # Calcula idade
         age = relativedelta(today, value).years
 
-        min_age = getattr(field_config, "minlen", 0)
-        max_age = getattr(field_config, "maxlen", 0)
+        min_age = getattr(field_config, "min_len", 0)
+        max_age = getattr(field_config, "max_len", 0)
 
         # Checa idade mínima se definida (>0)
         if min_age:
-            DomainException.when(
+            FieldValidatorException.when(
                 age < min_age,
                 MessageProvider.get_message(
                     "validation.error.min_age",
-                    {"field": field_name, "min": min_age, "actual": age}
+                    {"field": display_name, "min": min_age, "actual": age}
                 )
             )
         # Checa idade máxima se definida (>0)
         if max_age:
-            DomainException.when(
+            FieldValidatorException.when(
                 age > max_age,
                 MessageProvider.get_message(
                     "validation.error.max_age",
-                    {"field": field_name, "max": max_age, "actual": age}
+                    {"field": display_name, "max": max_age, "actual": age}
                 )
             )
 
     @classmethod
-    def validate_password(cls, value, field_name, field_config):
+    def validate_password(cls, value, display_name, field_config):
         value = value.strip() if value else ""
 
-        min_len = getattr(field_config, "minlen", 8)
-        max_len = getattr(field_config, "maxlen", 20)
+        min_len = getattr(field_config, "min_len", 8)
+        max_len = getattr(field_config, "max_len", 20)
 
         # Verifica comprimento mínimo
-        PasswordValidationError.when(
+        FieldValidatorException.when(
             len(value) < min_len,
             MessageProvider.get_message("validation.error.password_min_length", {
-                "field": field_name,
+                "field": display_name,
                 "min": min_len
             })
         )
         # Verifica comprimento máximo
-        PasswordValidationError.when(
+        FieldValidatorException.when(
             len(value) > max_len,
             MessageProvider.get_message("validation.error.password_max_length", {
-                "field": field_name,
+                "field": display_name,
                 "max": max_len
             })
         )
@@ -353,39 +346,60 @@ class DomainValidator:
             ("uppercase", "validation.error.password_uppercase"),
             ("special", "validation.error.password_special")
         ]:
-            PasswordValidationError.when(
+            FieldValidatorException.when(
                 not checks[check_type],
-                MessageProvider.get_message(message_key, {"field": field_name})
+                MessageProvider.get_message(message_key, {"field": display_name})
             )
 
     @staticmethod
-    def validate_enum(value, enum_cls, field_name, custom_message_key=None):
+    def validate_enum(value, enum_cls, display_name, custom_message_key=None):
         if isinstance(value, enum_cls): return
         try: 
             enum_cls(value.upper() if isinstance(value, str) else value)
         except ValueError:
-            raise DomainException(
+            raise FieldValidatorException(
                 MessageProvider.get_message(
                     custom_message_key or "validation.error.invalid_enum_value",
-                    {"field": field_name, "value": value}
+                    {"field": display_name, "value": value}
                 )
             )
         
     @classmethod
-    def validate_state_code(cls, value: str, field_name: str, field_config=None) -> None:
-        max_len = getattr(field_config, "maxlen", 2)
+    def validate_state_code(cls, value: str, display_name: str, field_config=None) -> None:
+        max_len = getattr(field_config, "max_len", 2)
         if not value or not isinstance(value, str) or len(value) != max_len:
-            raise DomainException(
+            raise FieldValidatorException(
                 MessageProvider.get_message(
                     "validation.error.invalid_state_code",
-                    {"field": field_name, "value": value}
+                    {"field": display_name, "value": value}
                 )
             )
-        # Valida se o valor está no Enum
+
         if value not in StateCodeEnum.__members__ and value not in StateCodeEnum._value2member_map_:
-            raise DomainException(
+            raise FieldValidatorException(
                 MessageProvider.get_message(
                     "validation.error.invalid_state_code",
-                    {"field": field_name, "value": value}
+                    {"field": display_name, "value": value}
+                )
+            )
+        
+    @classmethod
+    def validate_status(cls, value: int, display_name: str, field_config=None) -> None:
+        # Verifica se é do tipo int
+        if not isinstance(value, int):
+            raise FieldValidatorException(
+                MessageProvider.get_message(
+                    "validation.error.invalid_status_type",
+                    {"field": display_name, "value": value}
+                )
+            )
+        # Verifica se o int é membro válido do StatusEnum
+        try:
+            StatusEnum(value)
+        except ValueError:
+            raise FieldValidatorException(
+                MessageProvider.get_message(
+                    "validation.error.invalid_status_value",
+                    {"field": display_name, "value": value}
                 )
             )

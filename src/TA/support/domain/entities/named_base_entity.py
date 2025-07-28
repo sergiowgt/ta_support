@@ -1,8 +1,11 @@
 from dataclasses import dataclass, field
 from TA.support.domain.entities.base_entity import BaseEntity
-from TA.support.domain.entities.base_config_atributtes import NAME_FIELD
+from TA.support.infra.validators.field_presets import NAME_FIELD
 
 @dataclass
 class NamedBaseEntity(BaseEntity):
     name: str = field(default='', 
-                      metadata={'required': True, 'display': 'Name', 'field_config': NAME_FIELD, 'unique': True})
+        metadata={'field_config': NAME_FIELD, 
+                  'required': True, 
+                  'display': 'Name', 
+                  'unique': True})

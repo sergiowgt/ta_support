@@ -2,12 +2,12 @@
 import uuid
 from TA.support.infra.validators.field_presets import (
     CNPJ_FIELD, NAME_FIELD, UUID_FIELD, DATED_BY_FIELD, DATED_BY_FIELD,
-    STATECODE_FIELD, CPF_FIELD
+    STATECODE_FIELD, CPF_FIELD, EMAIL_FIELD, CELLPHONE_FIELD
 )
 from sqlalchemy import VARCHAR, TypeDecorator
 
 class UUIDType(TypeDecorator):
-    impl = VARCHAR(UUID_FIELD.maxlen)
+    impl = VARCHAR(UUID_FIELD.max_len)
 
     def process_bind_param(self, value, dialect):
             if value is None:
@@ -40,4 +40,10 @@ class CPFType(TypeDecorator):
 
 class CNPJType(TypeDecorator):
     impl = VARCHAR(CNPJ_FIELD.max_len)
+
+class CellphoneType(TypeDecorator):
+    impl = VARCHAR(CELLPHONE_FIELD.max_len)
+
+class EmailType(TypeDecorator):
+    impl = VARCHAR(EMAIL_FIELD.max_len)
 

@@ -1,27 +1,55 @@
 from dataclasses import fields
 from TA.support.application.exceptions.business_rule_exception import BusinessRuleException
+from TA.support.domain.enums.unique_type_enum import UniqueType
 from TA.support.i18n.message_provider import MessageProvider
 from sqlalchemy import select
 
 async def validate_uniqueness(data, entity_cls, repo, id=None):
-    from dataclasses import fields
+    async def handle_field_only():
+        get_by_method = getattr(repo, f"get_by_{f.name}", None)
+        if get_by_method:
+            existing = await get_by_method(value)
+            if existing and (id is None or existing.id != id):
+                msg = MessageProvider.get_message(
+                    "validation.error.duplicated_field",
+                    {
+                        "entity": entity_cls.__entity_name__,
+                        "field": meta.get('display', f.name),
+                        "value": value
+                    }
+                )
+                raise BusinessRuleException(msg)
+
+    async def handle_field_and_id():
+        get_by_method = getattr(repo, f"get_by_id_and_{f.name}", None)
+        if get_by_method:
+            existing = await get_by_method(id, value)
+            if existing and (id is None or existing.id != id):
+                msg = MessageProvider.get_message(
+                    "validation.error.duplicated_field",
+                    {
+                        "entity": entity_cls.__entity_name__,
+                        "field": meta.get('display', f.name),
+                        "value": value
+                    }
+                )
+                raise BusinessRuleException(msg)
+
+
     for f in fields(entity_cls):
         meta = f.metadata
-        if meta.get('unique'):
-            value = getattr(data, f.name)
-            get_by_method = getattr(repo, f"get_by_{f.name}", None)
-            if get_by_method:
-                existing = await get_by_method(value)
-                if existing and (id is None or existing.id != id):
-                    msg = MessageProvider.get_message(
-                        "validation.error.duplicated_field",
-                        {
-                            "entity": entity_cls.__entity_name__,
-                            "field": meta.get('display', f.name),
-                            "value": value
-                        }
-                    )
-                    raise BusinessRuleException(msg)
+        unique_type = meta.get('unique_type', UniqueType.FALSE)
+
+        if unique_type == UniqueType.FALSE:
+            continue  
+
+        value = getattr(data, f.name)
+        if unique_type == UniqueType.FIELD_ONLY:
+            handle_field_only()
+           
+        elif unique_type == UniqueType.FIELD_PLUS_ID:
+            handle_field_and_id()
+            
 
 async def validate_foreign_keys(data, entity_cls, repo_registry, session):
     for f in fields(entity_cls):

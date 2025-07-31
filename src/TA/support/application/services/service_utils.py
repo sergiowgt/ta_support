@@ -1,6 +1,6 @@
 from dataclasses import fields
 from TA.support.exceptions.business_rule_exception import BusinessRuleException
-from TA.support.domain.enums.unique_type_enum import UniqueType
+from TA.support.domain.enums.unique_type_enum import UniqueTypeEnum
 from TA.support.i18n.message_provider import MessageProvider
 from sqlalchemy import select
 
@@ -38,16 +38,16 @@ async def validate_uniqueness(data, entity_cls, repo, id=None):
 
     for f in fields(entity_cls):
         meta = f.metadata
-        unique_type = meta.get('unique_type', UniqueType.FALSE)
+        unique_type = meta.get('unique_type', UniqueTypeEnum.FALSE)
 
-        if unique_type == UniqueType.FALSE:
+        if unique_type == UniqueTypeEnum.FALSE:
             continue  
 
         value = getattr(data, f.name)
-        if unique_type == UniqueType.FIELD_ONLY:
+        if unique_type == UniqueTypeEnum.FIELD_ONLY:
             handle_field_only()
            
-        elif unique_type == UniqueType.FIELD_PLUS_ID:
+        elif unique_type == UniqueTypeEnum.FIELD_PLUS_ID:
             handle_field_and_id()
             
 

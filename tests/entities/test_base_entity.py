@@ -3,7 +3,7 @@ import pytest
 from datetime import datetime
 from TA.support.domain.entities.base_entity import BaseEntity
 from TA.support.domain.enums.status_enum import StatusEnum
-from TA.support.infra.validators.field_validator_exception import FieldValidatorException
+from TA.support.exceptions.field_validator_exception import FieldValidatorException
 from TA.support.i18n.message_provider import MessageProvider
 
 class TestBaseEntity:

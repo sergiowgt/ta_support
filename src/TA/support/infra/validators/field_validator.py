@@ -1,12 +1,13 @@
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
+import json
 import re
 from uuid import UUID
 from TA.support.domain.enums.state_code_enum import StateCodeEnum
 from TA.support.domain.enums.status_enum import StatusEnum
 from TA.support.i18n.message_provider import MessageProvider
 from dateutil.relativedelta import relativedelta
-from TA.support.infra.validators.field_validator_exception import FieldValidatorException
+from TA.support.exceptions.field_validator_exception import FieldValidatorException
 
 class FieldValidator:
     @staticmethod
@@ -102,7 +103,20 @@ class FieldValidator:
                         {"field": display_name, "max": max_len}
                     )
                 )
-
+    @staticmethod
+    def validate_json(value, display_name, field_config):
+        if not value:
+            raise FieldValidatorException(
+                MessageProvider.get_message("validation.error.empty_field", {"field": display_name})
+        )
+        
+        try:
+            json.loads(value)
+        except Exception:
+            raise FieldValidatorException(
+                MessageProvider.get_message("validation.error.invalid_json", {"field": display_name})
+            )
+                
     @classmethod
     def validate_email(cls, value, display_name, field_config):
         cls.validate_string(value, display_name, field_config)

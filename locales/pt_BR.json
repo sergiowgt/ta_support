@@ -1,7 +1,10 @@
 {
+    "validation.error.invalid_google_token": "Token Google está invalido ou expirado.",
+    "validation.error.user_not_exists": "Token Google está invalido ou expirado.",
     "validation.error.empty_field": "{field} não pode estar vazio",
     "validation.error.max_length": "{field} não pode exceder {max} caracteres",
     "validation.error.invalid_datetime": "{field} deve ser uma data/hora válida",
+    "validation.error.invalid_json": "{field} não é um json válido",
     "validation.error.future_date": "{field} não pode ser uma data futura",
     "validation.error.invalid_email": "{field} não é um e-mail válido",
     "validation.error.invalid_phone": "{field} não é um telefone celular válido",

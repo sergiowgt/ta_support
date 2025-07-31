@@ -55,6 +55,7 @@ class BaseEntity:
         return display_name, required, value
 
     def call_default_validators(self, field_config, display_name, value):
+        #print(f"{display_name} => {type(field_config)}, {type(value)} {value}")
         if isinstance(field_config, StrFieldConfig):
             FieldValidator.validate_string(value, display_name, field_config)
         elif isinstance(field_config, IntFieldConfig):
@@ -64,7 +65,7 @@ class BaseEntity:
         elif isinstance(field_config, DateFieldConfig):
             FieldValidator.validate_datetime(value, display_name, field_config)
         elif isinstance(field_config, JsonFieldConfig):
-            FieldValidator.validate_string(value, display_name, field_config)
+            FieldValidator.validate_json(value, display_name, field_config)
 
     def validate(self) -> bool:
         for f in fields(self):

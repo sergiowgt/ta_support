@@ -4,6 +4,7 @@ from uuid import uuid4
 
 from TA.support.infra.validators.field_validator import FieldValidator
 from TA.support.infra.validators.fields.date_field_config import DateFieldConfig
+from TA.support.infra.validators.fields.datetime_field_config import DateTimeFieldConfig
 from TA.support.infra.validators.fields.decimal_field_config import DecimalFieldConfig
 from TA.support.infra.validators.fields.int_field_config import IntFieldConfig
 from TA.support.infra.validators.fields.json_field_config import JsonFieldConfig
@@ -62,8 +63,10 @@ class BaseEntity:
             FieldValidator.validate_integer(value, display_name, field_config)
         elif isinstance(field_config, DecimalFieldConfig):
             FieldValidator.validate_decimal(value, display_name, field_config)
-        elif isinstance(field_config, DateFieldConfig):
+        elif isinstance(field_config, DateTimeFieldConfig):
             FieldValidator.validate_datetime(value, display_name, field_config)
+        elif isinstance(field_config, DateFieldConfig):
+            FieldValidator.validate_date(value, display_name, field_config)
         elif isinstance(field_config, JsonFieldConfig):
             FieldValidator.validate_json(value, display_name, field_config)
 

@@ -147,6 +147,19 @@ class FieldValidator:
             raise FieldValidatorException(
                 MessageProvider.get_message(msg_key, {"field": display_name})
             )
+    
+    @classmethod
+    def validate_date(self, value, display_name, field_config):
+        if not value:
+            raise FieldValidatorException(
+                MessageProvider.get_message("validation.error.empty_field", {"field": display_name})
+        )
+        
+        if not isinstance(value, date):
+            msg_key = "validation.error.invalid_date"
+            raise FieldValidatorException(
+                MessageProvider.get_message(msg_key, {"field": display_name})
+            )
 
     @classmethod
     def validate_cell_phone(cls, value, display_name, field_config):

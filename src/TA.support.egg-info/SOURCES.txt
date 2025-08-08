@@ -29,6 +29,7 @@ src/TA/support/infra/database/async_db_handler.py
 src/TA/support/infra/database/idb_handler.py
 src/TA/support/infra/db_config/db_config.py
 src/TA/support/infra/orm/async_sqlalchemy_uow.py
+src/TA/support/infra/orm/type_decorators.py
 src/TA/support/infra/validators/field_presets.py
 src/TA/support/infra/validators/field_validator.py
 src/TA/support/infra/validators/fields/__init__.py

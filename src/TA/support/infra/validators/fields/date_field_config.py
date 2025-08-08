@@ -5,5 +5,5 @@ from .field_config import FieldConfig
 
 @dataclass
 class DateFieldConfig(FieldConfig):
-    min_value: Optional[str] = None  # 'YYYY-MM-DD'
+    min_value: Optional[str] = None 
     max_value: Optional[str] = None

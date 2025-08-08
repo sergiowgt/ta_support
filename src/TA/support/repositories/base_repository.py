@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import Any, List, Optional
+from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from TA.support.infra.database.idb_handler import IDbHandler
@@ -16,7 +17,7 @@ class BaseRepository(IBaseRepository):
         self._session = session
         self._entity = entity
 
-    def _make_query(self, id: int, only_active: bool = False) -> Any:
+    def _make_query(self, id: UUID, only_active: bool = False) -> Any:
         query = select(self._entity).where(self._entity.id == id)
         if only_active:
             query = query.where(self._entity.status == StatusEnum.ACTIVE)
@@ -24,13 +25,13 @@ class BaseRepository(IBaseRepository):
             query = query.where(self._entity.status != StatusEnum.LOGICALLY_DELETED)
         return query
 
-    async def exists(self, id: int, only_active: bool = False) -> bool:
+    async def exists(self, id: UUID, only_active: bool = False) -> bool:
         result = await self._session.execute(
             self._make_query(id, only_active)
         )
         return result.scalars().first() is not None
 
-    async def get(self, id: int, only_active: bool = False) -> Optional[BaseEntity]:
+    async def get(self, id: UUID, only_active: bool = False) -> Optional[BaseEntity]:
         result = await self._session.execute(
             self._make_query(id, only_active)
         )

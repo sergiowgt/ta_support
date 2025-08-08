@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, time
 from decimal import Decimal, InvalidOperation
 import json
 import re
@@ -157,6 +157,19 @@ class FieldValidator:
         
         if not isinstance(value, date):
             msg_key = "validation.error.invalid_date"
+            raise FieldValidatorException(
+                MessageProvider.get_message(msg_key, {"field": display_name})
+            )
+
+    @classmethod
+    def validate_time(self, value, display_name, field_config):
+        if not value:
+            raise FieldValidatorException(
+                MessageProvider.get_message("validation.error.empty_field", {"field": display_name})
+        )
+        
+        if not isinstance(value, time):
+            msg_key = "validation.error.invalid_time"
             raise FieldValidatorException(
                 MessageProvider.get_message(msg_key, {"field": display_name})
             )

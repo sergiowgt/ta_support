@@ -1,5 +1,5 @@
 import jwt
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from fastapi import HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from .JWT_config import JWTConfig
@@ -49,3 +49,15 @@ class JWTHandler:
                 raise HTTPException(status_code=401, detail="Invalid token")
             return claim_value
         return dependency
+
+    @staticmethod
+    def create_access_token(data: dict) -> str:
+        to_encode = data.copy()
+        expire = datetime.now(timezone.utc) + timedelta(minutes=JWTConfig.ACCESS_TOKEN_EXPIRE_MINUTES)
+        to_encode.update({"exp": expire})
+        encoded_jwt = jwt.encode(
+            to_encode,
+            JWTConfig.SECRET_KEY,
+            algorithm=JWTConfig.ALGORITHM
+        )
+        return encoded_jwt

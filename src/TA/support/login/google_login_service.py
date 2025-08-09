@@ -5,12 +5,13 @@ from google.auth.transport import requests as google_requests
 from TA.support.exceptions import LoginException
 
 class GoogleLoginService():
-    def __init__(self, user_repository: ILoginRepository):
+    def __init__(self, user_repository: ILoginRepository, google_login_api_key: str):
         self.user_repository = user_repository
+        self.google_login_api_key = google_login_api_key
 
     async def login(self, google_token):
         try:
-            idinfo = google_id_token.verify_oauth2_token(google_token, google_requests.Request(), "734906372962-qqq2ue2hcd44om84m7dmqg1joimu1320.apps.googleusercontent.com")
+            idinfo = google_id_token.verify_oauth2_token(google_token, google_requests.Request(), self.google_login_api_key)
             email = idinfo.get("email")
             name = idinfo.get("name")
             if not email or not name:

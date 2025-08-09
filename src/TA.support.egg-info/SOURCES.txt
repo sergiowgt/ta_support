@@ -42,6 +42,8 @@ src/TA/support/infra/validators/fields/json_field_config.py
 src/TA/support/infra/validators/fields/str_field_config.py
 src/TA/support/infra/validators/fields/time_field_config.py
 src/TA/support/login/Ilogin_repository.py
+src/TA/support/login/__init__.py
+src/TA/support/login/google_login_config.py
 src/TA/support/login/google_login_service.py
 src/TA/support/repositories/__init__.py
 src/TA/support/repositories/base_repository.py

@@ -170,6 +170,20 @@ class FieldValidator:
         FieldValidatorException.when(
             re.fullmatch(regex, value) is None,
             MessageProvider.get_message(
+                "validation.error.invalid_cell_phone",
+                {"field": display_name}
+            )
+        )
+
+    @classmethod
+    def validate_phone(cls, value, display_name, field_config):
+        cls.validate_string(value, display_name, field_config)
+        value = value.strip()
+
+        regex = re.compile(r'^(\+?55)?([1-9]{2})[0-9]{8}$')
+        FieldValidatorException.when(
+            re.fullmatch(regex, value) is None,
+            MessageProvider.get_message(
                 "validation.error.invalid_phone",
                 {"field": display_name}
             )

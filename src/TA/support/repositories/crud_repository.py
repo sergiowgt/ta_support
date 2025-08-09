@@ -20,7 +20,6 @@ class CRUDRepository(BaseRepository):
         self._session.add(obj)
         await self._session.flush()  
 
-
     async def update(self, obj: BaseEntity, updated_by: str) -> None:
         obj.updated_at = datetime.now()
         obj.updated_by = updated_by

@@ -11,6 +11,7 @@ from TA.support.infra.validators.fields.json_field_config import JsonFieldConfig
 from TA.support.infra.validators.fields.str_field_config import StrFieldConfig
 from TA.support.domain.enums.status_enum import StatusEnum
 from TA.support.infra.validators.field_presets import DATED_BY_FIELD, DATED_AT_FIELD, STATUS_FIELD, UUID_FIELD
+from TA.support.infra.validators.fields.time_field_config import TimeFieldConfig
 
 @dataclass
 class BaseEntity:
@@ -56,7 +57,6 @@ class BaseEntity:
         return display_name, required, value
 
     def call_default_validators(self, field_config, display_name, value):
-        #print(f"{display_name} => {type(field_config)}, {type(value)} {value}")
         if isinstance(field_config, StrFieldConfig):
             FieldValidator.validate_string(value, display_name, field_config)
         elif isinstance(field_config, IntFieldConfig):
@@ -65,12 +65,14 @@ class BaseEntity:
             FieldValidator.validate_decimal(value, display_name, field_config)
         elif isinstance(field_config, DateTimeFieldConfig):
             FieldValidator.validate_datetime(value, display_name, field_config)
+        elif isinstance(field_config, TimeFieldConfig):
+            FieldValidator.validate_time(value, display_name, field_config)
         elif isinstance(field_config, DateFieldConfig):
             FieldValidator.validate_date(value, display_name, field_config)
         elif isinstance(field_config, JsonFieldConfig):
             FieldValidator.validate_json(value, display_name, field_config)
 
-    def validate(self) -> bool:
+    def validate(self):
         for f in fields(self):
             display_name, required, value = self._get_metadata_info(f.metadata, f.name)
             if not required and not value:
@@ -92,19 +94,3 @@ class BaseEntity:
         if self.updated_by:
             FieldValidator.validate_string(self.updated_by, self._get_display_name('updated_by'), DATED_BY_FIELD)
             FieldValidator.validate_datetime(self.updated_at, self._get_display_name('updated_at'), DATED_AT_FIELD)
-        
-        return True
-
-
-"""     def validate(self):
-        self.validate_string_empty_and_len('created_by')
-        self.validate_datetime('created_at')
-        
-        if self.updated_at:
-            self.validate_datetime('updated_at')
-            self.validate_string_empty_and_len('updated_by')
-
-        if self.updated_by:
-            self.validate_string_empty_and_len('updated_by')
-            self.validate_datetime('updated_at')
- """

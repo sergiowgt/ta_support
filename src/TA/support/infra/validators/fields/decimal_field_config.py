@@ -8,5 +8,5 @@ from .field_config import FieldConfig
 class DecimalFieldConfig(FieldConfig):
     precision: int = 8
     scale: int = 2
-    min_value: Optional[Decimal] = None
-    max_value: Optional[Decimal] = None
+    min_value: Optional[Decimal] = Decimal('0.0')
+    max_value: Optional[Decimal] = Decimal('0.0')

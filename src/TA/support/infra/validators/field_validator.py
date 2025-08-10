@@ -216,8 +216,8 @@ class FieldValidator:
             )
         
         # Limites a partir do config
-        min_value = getattr(field_config, "min_len", None)
-        max_value = getattr(field_config, "max_len", None)
+        min_value = getattr(field_config, "min_value", None)
+        max_value = getattr(field_config, "max_value", None)
 
         # Validação mínima
         if min_value is not None and min_value != 0 and decimal_value < Decimal(str(min_value)):
@@ -251,8 +251,8 @@ class FieldValidator:
             )
         
         # Limites extraídos do config
-        min_value = getattr(field_config, "min_len", None)
-        max_value = getattr(field_config, "max_len", None)
+        min_value = getattr(field_config, "min_value", None)
+        max_value = getattr(field_config, "max_value", None)
 
         # Observa: ignore limites quando None ou 0 (sem restrição)
         if min_value is not None and min_value != 0 and int_value < min_value:
@@ -321,7 +321,7 @@ class FieldValidator:
         FieldValidatorException.when(
             not isinstance(value, date),
             MessageProvider.get_message(
-                "validation.error.invalid_datetime",
+                "validation.error.invalid_date",
                 {"field": display_name}
             )
         )
@@ -339,8 +339,8 @@ class FieldValidator:
         # Calcula idade
         age = relativedelta(today, value).years
 
-        min_age = getattr(field_config, "min_len", 0)
-        max_age = getattr(field_config, "max_len", 0)
+        min_age = getattr(field_config, "min_age", 0)
+        max_age = getattr(field_config, "max_age", 0)
 
         # Checa idade mínima se definida (>0)
         if min_age:

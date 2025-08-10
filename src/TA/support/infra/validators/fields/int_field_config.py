@@ -5,5 +5,5 @@ from .field_config import FieldConfig
 
 @dataclass
 class IntFieldConfig(FieldConfig):
-    min_value: Optional[int] = int()
-    max_value: Optional[int] = int()
+    min_value: Optional[int] = 0
+    max_value: Optional[int] = 0

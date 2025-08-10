@@ -5,5 +5,5 @@ from .field_config import FieldConfig
 
 @dataclass
 class TimeFieldConfig(FieldConfig):
-    min_value: Optional[str] = None 
-    max_value: Optional[str] = None
+    min_value: Optional[str] = '' 
+    max_value: Optional[str] = ''

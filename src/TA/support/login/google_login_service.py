@@ -5,11 +5,26 @@ from google.auth.transport import requests as google_requests
 from TA.support.exceptions import LoginException
 
 class GoogleLoginService():
-    def __init__(self, user_repository: ILoginRepository, google_login_api_key: str):
-        self.user_repository = user_repository
+    def __init__(self,  google_login_api_key: str):
         self.google_login_api_key = google_login_api_key
 
-    async def login(self, google_token):
+    async def validate(self, google_token):
+        try:
+            idinfo = google_id_token.verify_oauth2_token(google_token, google_requests.Request(), self.google_login_api_key)
+            email = idinfo.get("email")
+            name = idinfo.get("name")
+            if not email or not name:
+                raise LoginException("Token inválido")
+        except Exception as e:
+            raise LoginException(str(e))
+
+        return {
+            "email": email,
+            "name": name
+        }
+
+
+    async def login(self, user_repository: ILoginRepository, google_token):
         try:
             idinfo = google_id_token.verify_oauth2_token(google_token, google_requests.Request(), self.google_login_api_key)
             email = idinfo.get("email")
@@ -19,7 +34,7 @@ class GoogleLoginService():
         except Exception as e:
             raise LoginException(str(e))
 
-        user = await self.user_repository.get_by_email(email)
+        user = await user_repository.get_by_email(email)
         if not user:
             raise LoginException(MessageProvider.get_message("validation.error.user_not_exists"))
 

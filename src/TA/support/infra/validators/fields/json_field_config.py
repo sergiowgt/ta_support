@@ -4,4 +4,4 @@ from .field_config import FieldConfig
 
 @dataclass
 class JsonFieldConfig(FieldConfig):
-    schema: Optional[dict] = {}
+    schema: Optional[dict] = None

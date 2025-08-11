@@ -4,6 +4,8 @@
     "validation.error.empty_field": "{field} não pode estar vazio",
     "validation.error.max_length": "{field} não pode exceder {max} caracteres",
     "validation.error.invalid_datetime": "{field} deve ser uma data/hora válida",
+    "validation.error.invalid_date": "{field} deve ser uma data válida",
+    "validation.error.invalid_time": "{field} deve ser uma hora válida",
     "validation.error.invalid_json": "{field} não é um json válido",
     "validation.error.future_date": "{field} não pode ser uma data futura",
     "validation.error.invalid_email": "{field} não é um e-mail válido",
@@ -28,5 +30,5 @@
     "validation.error.password_special": "{field} deve conter pelo menos um caractere especial",
     "validation.error.invalid_enum_value": "{field} contém valor inválido: {value}",
     "validation.error.invalid_state_code": "{field} com código inválido: {value}",
-    "validation.error.invalid_uuid": "{field} deve ser um UUID válido",
+    "validation.error.invalid_uuid": "{field} deve ser um UUID válido"
 }

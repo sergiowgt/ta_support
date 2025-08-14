@@ -1,13 +1,14 @@
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
+from TA.support.domain.contracts.CRUD_repository import ICRUDRepository
 from TA.support.infra.database.idb_handler import IDbHandler
 from .base_repository import BaseRepository
 from ..domain.entities.base_entity import BaseEntity
 from ..domain.enums.status_enum import StatusEnum
 
 @dataclass
-class CRUDRepository(BaseRepository):
+class CRUDRepository(BaseRepository, ICRUDRepository):
     def __init__(self, db: IDbHandler, entity: Any):
         super().__init__(db, entity)
 

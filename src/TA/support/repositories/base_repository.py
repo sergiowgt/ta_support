@@ -4,7 +4,7 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from TA.support.infra.database.idb_handler import IDbHandler
-from .ibase_repository import IBaseRepository
+from ..domain.contracts.ibase_repository import IBaseRepository
 from ..domain.entities.base_entity import BaseEntity
 from ..domain.enums.status_enum import StatusEnum
 

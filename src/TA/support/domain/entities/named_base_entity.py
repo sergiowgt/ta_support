@@ -9,4 +9,4 @@ class NamedBaseEntity(BaseEntity):
         metadata={'field_config': NAME_FIELD, 
                   'required': True, 
                   'display': 'Name', 
-                  'unique': UniqueTypeEnum.FIELD_ONLY})
+                  'unique_type': UniqueTypeEnum.FIELD_ONLY})

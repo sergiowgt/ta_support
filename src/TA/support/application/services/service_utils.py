@@ -45,10 +45,10 @@ async def validate_uniqueness(data, entity_cls, repo, id=None):
 
         value = getattr(data, f.name)
         if unique_type == UniqueTypeEnum.FIELD_ONLY:
-            handle_field_only()
+            await handle_field_only()
            
         elif unique_type == UniqueTypeEnum.FIELD_PLUS_ID:
-            handle_field_and_id()
+            await handle_field_and_id()
             
 
 async def validate_foreign_keys(data, entity_cls, repo_registry, session):

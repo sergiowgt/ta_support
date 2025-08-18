@@ -220,7 +220,7 @@ class FieldValidator:
         max_value = getattr(field_config, "max_value", Decimal('0'))
 
         # Validação mínima, quando min_value não é um valor padrão (0, 0.0, '', None)
-        if min_value and decimal_value < Decimal(str(min_value)):
+        if min_value is not None and decimal_value < Decimal(str(min_value)):
             raise FieldValidatorException(
                 MessageProvider.get_message(
                     "validation.error.decimal.min_value",
@@ -229,7 +229,7 @@ class FieldValidator:
             )
 
         # Validação máxima, quando max_value não é um valor padrão (0, 0.0, '', None)
-        if max_value and decimal_value > Decimal(str(max_value)):
+        if max_value is not None and decimal_value > Decimal(str(max_value)):
             raise FieldValidatorException(
                 MessageProvider.get_message(
                     "validation.error.decimal.max_value",
@@ -251,11 +251,11 @@ class FieldValidator:
             )
         
         # Limites extraídos do config
-        min_value = getattr(field_config, "min_value", int())
-        max_value = getattr(field_config, "max_value", int())
+        min_value = getattr(field_config, "min_value", 0)
+        max_value = getattr(field_config, "max_value", 0)
 
         # Observa: ignore limites quando None ou 0 (sem restrição)
-        if min_value and int_value < min_value:
+        if min_value is not None and int_value < min_value:
             raise FieldValidatorException(
                 MessageProvider.get_message(
                     "validation.error.integer.min_value",
@@ -263,7 +263,7 @@ class FieldValidator:
                 )
             )
         
-        if max_value and int_value > max_value:
+        if max_value is not None and int_value > max_value:
             raise FieldValidatorException(
                 MessageProvider.get_message(
                     "validation.error.integer.max_value",

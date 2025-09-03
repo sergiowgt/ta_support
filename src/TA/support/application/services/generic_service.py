@@ -23,7 +23,7 @@ class GenericService(IService):
             raise BusinessRuleException(msg)
         return entity
 
-    async def get(self, id: UUID) -> Optional:
+    async def get(self, id: UUID) -> Optional[type]:
         async with self.uow:
             repo = self.repo_cls(self.uow.session)
             return await self._get_entity(id, repo, only_active=True)
@@ -33,10 +33,10 @@ class GenericService(IService):
             repo = self.repo_cls(self.uow.session)
             return await repo.get_all(only_active=only_active)
 
-    async def _validate_childs(self, id: UUID):
+    async def _validate_childs(self, data: Type):
         ...
             
-    async def _validate_fk(self, id: UUID):
+    async def _validate_fk(self, data: Type):
         ...
     
     async def create(self, data, created_by: str):

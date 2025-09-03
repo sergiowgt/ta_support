@@ -8,6 +8,7 @@ class BaseCrudRouter:
         self,
         prefix: str,
         tags: list,
+        main_repository_cls: type,
         service_cls: type,
         create_schema: Type,
         update_schema: Type,

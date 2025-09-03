@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field, fields
 from datetime import datetime
-from uuid import uuid4
+from typing import Optional
+from uuid import UUID, uuid4
 
 from TA.support.infra.validators.field_validator import FieldValidator
 from TA.support.infra.validators.fields.date_field_config import DateFieldConfig
@@ -15,7 +16,7 @@ from TA.support.infra.validators.fields.time_field_config import TimeFieldConfig
 
 @dataclass
 class BaseEntity:
-    id: str = field(default_factory=uuid4, 
+    id: UUID = field(default_factory=uuid4, 
                metadata={
                    'field_config': UUID_FIELD, 
                    'display': 'UUID'}
@@ -35,11 +36,11 @@ class BaseEntity:
                                       'display': 'CreatedBy', 
                                       'required': True}
                             )
-    updated_at: datetime = field(default=None, 
+    updated_at: Optional[datetime] = field(default=None, 
                                  metadata={'field_config': DATED_AT_FIELD,
                                            'display': 'UpdatedAt'}
                             )
-    updated_by: str = field(default=None, 
+    updated_by: Optional[str] = field(default=None, 
                             metadata={'field_config': DATED_BY_FIELD,
                                       'display': 'UpdatedBy'})
 

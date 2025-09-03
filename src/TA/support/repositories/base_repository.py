@@ -10,8 +10,8 @@ from ..domain.enums.status_enum import StatusEnum
 
 @dataclass
 class BaseRepository(IBaseRepository):
-    _session: AsyncSession = NotImplementedError
-    _entity: BaseEntity = NotImplementedError
+    _session: Optional[AsyncSession] = None
+    _entity: Optional[BaseEntity] = None
 
     def __init__(self, session: AsyncSession, entity: BaseEntity):
         self._session = session

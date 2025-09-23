@@ -12,4 +12,4 @@ EMAIL_FIELD = StrFieldConfig(str, min_len=0, max_len=255, validator=FieldValidat
 STATUS_FIELD = IntFieldConfig(str, validator=FieldValidator.validate_status)
 NAME_FIELD = StrFieldConfig(str, max_len=100)
 DATED_BY_FIELD = StrFieldConfig(str, max_len=50)
-DATED_AT_FIELD = DateFieldConfig(datetime)
+DATED_AT_FIELD = DateFieldConfig(datetime) 

@@ -1,13 +1,14 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import List, Optional
+from uuid import UUID
 from TA.support.domain.entities.base_entity import BaseEntity
 
 @dataclass
 class IBaseRepository(ABC):
 
     @abstractmethod
-    async def get(self, id: int, only_active: bool = False) -> Optional[BaseEntity]:
+    async def get(self, id: UUID, only_active: bool = False) -> Optional[BaseEntity]:
         raise NotImplementedError()
 
     @abstractmethod
@@ -15,5 +16,5 @@ class IBaseRepository(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def exists(self, id: int, only_active: bool = False) -> bool:
+    async def exists(self, id: UUID, only_active: bool = False) -> bool:
         raise NotImplementedError()

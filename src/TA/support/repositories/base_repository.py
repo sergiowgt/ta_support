@@ -20,9 +20,9 @@ class BaseRepository(IBaseRepository):
     def _make_query(self, id: UUID, only_active: bool = False) -> Any:
         query = select(self._entity).where(self._entity.id == id)
         if only_active:
-            query = query.where(self._entity.status == StatusEnum.ACTIVE)
+            query = query.where(self._entity.status == StatusEnum.ACTIVE.value)
         else:
-            query = query.where(self._entity.status != StatusEnum.LOGICALLY_DELETED)
+            query = query.where(self._entity.status != StatusEnum.LOGICALLY_DELETED.value)
         return query
 
     async def exists(self, id: UUID, only_active: bool = False) -> bool:
@@ -40,9 +40,9 @@ class BaseRepository(IBaseRepository):
     async def get_all(self, only_active: bool = False, page=1, page_size=20) -> List[BaseEntity]:
         query = select(self._entity)
         if only_active:
-            query = query.where(self._entity.status == StatusEnum.ACTIVE)
+            query = query.where(self._entity.status == StatusEnum.ACTIVE.value)
         else:
-            query = query.where(self._entity.status != StatusEnum.LOGICALLY_DELETED)
+            query = query.where(self._entity.status != StatusEnum.LOGICALLY_DELETED.value)
         query = query.offset((page - 1) * page_size).limit(page_size)
         result = await self._session.execute(query)
         return result.scalars().all()

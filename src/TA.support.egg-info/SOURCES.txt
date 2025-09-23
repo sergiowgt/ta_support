@@ -9,7 +9,10 @@ src/TA/support/JWT/JWT_config.py
 src/TA/support/JWT/JWT_handler.py
 src/TA/support/application/services/generic_service.py
 src/TA/support/application/services/service_utils.py
+src/TA/support/domain/contracts/CRUD_repository.py
 src/TA/support/domain/contracts/__init__.py
+src/TA/support/domain/contracts/ibase_repository.py
+src/TA/support/domain/contracts/inamed_repository.py
 src/TA/support/domain/contracts/ireadonly_service.py
 src/TA/support/domain/contracts/iservice.py
 src/TA/support/domain/contracts/iunit_of_work.py
@@ -48,6 +51,5 @@ src/TA/support/login/google_login_service.py
 src/TA/support/repositories/__init__.py
 src/TA/support/repositories/base_repository.py
 src/TA/support/repositories/crud_repository.py
-src/TA/support/repositories/ibase_repository.py
 src/TA/support/repositories/named_repository.py
 src/TA/support/routers/base_crud_router.py

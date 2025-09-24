@@ -103,6 +103,7 @@ class FieldValidator:
                         {"field": display_name, "max": max_len}
                     )
                 )
+    
     @staticmethod
     def validate_json(value, display_name, field_config):
         if not value:
@@ -136,7 +137,7 @@ class FieldValidator:
         )
 
     @classmethod
-    def validate_datetime(self, value, display_name, field_config):
+    def validate_datetime(cls, value, display_name, field_config):
         if not value:
             raise FieldValidatorException(
                 MessageProvider.get_message("validation.error.empty_field", {"field": display_name})
@@ -149,7 +150,7 @@ class FieldValidator:
             )
     
     @classmethod
-    def validate_date(self, value, display_name, field_config):
+    def validate_date(cls, value, display_name, field_config):
         if not value:
             raise FieldValidatorException(
                 MessageProvider.get_message("validation.error.empty_field", {"field": display_name})
@@ -162,7 +163,7 @@ class FieldValidator:
             )
 
     @classmethod
-    def validate_time(self, value, display_name, field_config):
+    def validate_time(cls, value, display_name, field_config):
         if not value:
             raise FieldValidatorException(
                 MessageProvider.get_message("validation.error.empty_field", {"field": display_name})
@@ -216,8 +217,8 @@ class FieldValidator:
             )
         
         # Limites a partir do config
-        min_value = getattr(field_config, "min_value", Decimal('0'))
-        max_value = getattr(field_config, "max_value", Decimal('0'))
+        min_value = getattr(field_config, "min_value", None)
+        max_value = getattr(field_config, "max_value", None)
 
         # Validação mínima, quando min_value não é um valor padrão (0, 0.0, '', None)
         if min_value is not None and decimal_value < Decimal(str(min_value)):
@@ -251,8 +252,8 @@ class FieldValidator:
             )
         
         # Limites extraídos do config
-        min_value = getattr(field_config, "min_value", 0)
-        max_value = getattr(field_config, "max_value", 0)
+        min_value = getattr(field_config, "min_value", None)
+        max_value = getattr(field_config, "max_value", None)
 
         # Observa: ignore limites quando None ou 0 (sem restrição)
         if min_value is not None and int_value < min_value:
@@ -273,13 +274,13 @@ class FieldValidator:
 
     @classmethod
     def validate_cpf(cls, value: str, display_name: str, field_config) -> None:
-            cls.validate_string(value, display_name, field_config)
-            value = value.strip()
-            regex = re.compile(r'^\d{11}$')
-            FieldValidatorException.when(
-                re.fullmatch(regex, value) is None or not cls._cpf_is_valid(value),
-                MessageProvider.get_message("validation.error.invalid_cpf", {"field": display_name})
-            )
+        cls.validate_string(value, display_name, field_config)
+        value = value.strip()
+        regex = re.compile(r'^\d{11}$')
+        FieldValidatorException.when(
+            re.fullmatch(regex, value) is None or not cls._cpf_is_valid(value),
+            MessageProvider.get_message("validation.error.invalid_cpf", {"field": display_name})
+        )
 
     @classmethod
     def validate_cnpj(cls, value, display_name, field_config):
@@ -404,19 +405,6 @@ class FieldValidator:
             FieldValidatorException.when(
                 not checks[check_type],
                 MessageProvider.get_message(message_key, {"field": display_name})
-            )
-
-    @staticmethod
-    def validate_enum(value, enum_cls, display_name, custom_message_key=None):
-        if isinstance(value, enum_cls): return
-        try: 
-            enum_cls(value.upper() if isinstance(value, str) else value)
-        except ValueError:
-            raise FieldValidatorException(
-                MessageProvider.get_message(
-                    custom_message_key or "validation.error.invalid_enum_value",
-                    {"field": display_name, "value": value}
-                )
             )
         
     @classmethod

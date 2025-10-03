@@ -16,7 +16,7 @@ class CRUDRepository(BaseRepository, ICRUDRepository):
         obj.id = None
         obj.created_at = datetime.now()
         obj.created_by = created_by
-        obj.status = StatusEnum.ACTIVE
+        obj.status = StatusEnum.ACTIVE.value
         obj.validate()
         self._session.add(obj)
         await self._session.flush()  
@@ -29,4 +29,4 @@ class CRUDRepository(BaseRepository, ICRUDRepository):
     async def delete(self, obj: BaseEntity, updated_by: str) -> None:
         obj.updated_at = datetime.now()
         obj.updated_by = updated_by
-        obj.status = StatusEnum.LOGICALLY_DELETED
+        obj.status = StatusEnum.LOGICALLY_DELETED.value

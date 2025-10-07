@@ -105,7 +105,7 @@ class GenericService(IService):
                 raise BusinessRuleException(msg)
             
             # atualiza
-            entity.status = StatusEnum.ACTIVE
+            entity.status = StatusEnum.ACTIVE.value
             await repo.update(entity, updated_by)
             
     async def inactivate(self, id: UUID, updated_by: str) -> None:
@@ -120,5 +120,5 @@ class GenericService(IService):
                 raise BusinessRuleException(msg)
             
             # atualiza
-            entity.status = StatusEnum.INACTIVE
+            entity.status = StatusEnum.INACTIVE.value
             await repo.update(entity, updated_by)

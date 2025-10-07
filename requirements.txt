@@ -21,7 +21,6 @@ six==1.17.0
 sniffio==1.3.1
 SQLAlchemy==2.0.41
 starlette==0.46.2
-TA.support==0.1.0
 typing-inspection==0.4.1
 typing_extensions==4.14.0
 unicorn==2.1.3

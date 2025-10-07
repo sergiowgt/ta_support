@@ -106,17 +106,26 @@ class FieldValidator:
     
     @staticmethod
     def validate_json(value, display_name, field_config):
-        if not value:
+        if value is None:
             raise FieldValidatorException(
                 MessageProvider.get_message("validation.error.empty_field", {"field": display_name})
-        )
-        
-        try:
-            json.loads(value)
-        except Exception:
-            raise FieldValidatorException(
-                MessageProvider.get_message("validation.error.invalid_json", {"field": display_name})
             )
+        # Se for dicionário, já é JSON válido
+        if isinstance(value, dict):
+            return
+        # Se for string, tentar desserializar
+        if isinstance(value, str):
+            try:
+                json.loads(value)
+            except Exception:
+                raise FieldValidatorException(
+                    MessageProvider.get_message("validation.error.invalid_json", {"field": display_name})
+                )
+            return
+        # Outros tipos inválidos
+        raise FieldValidatorException(
+            MessageProvider.get_message("validation.error.invalid_json", {"field": display_name})
+        )
                 
     @classmethod
     def validate_email(cls, value, display_name, field_config):

@@ -43,9 +43,8 @@ class AsyncDbHandler(IDbHandler):
         await self.session.flush()
 
     async def close(self) -> None:
-        await self.session.close()
-        await self.engine.dispose()
-
+        pass
+        
     async def change_schema(self, schema_name: str):
         await self.session.execute(f"SET search_path TO {schema_name}")
 

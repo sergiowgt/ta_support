@@ -36,6 +36,7 @@ src/TA/support/infra/orm/type_decorators.py
 src/TA/support/infra/validators/field_presets.py
 src/TA/support/infra/validators/field_validator.py
 src/TA/support/infra/validators/fields/__init__.py
+src/TA/support/infra/validators/fields/bool_field_config.py
 src/TA/support/infra/validators/fields/date_field_config.py
 src/TA/support/infra/validators/fields/datetime_field_config.py
 src/TA/support/infra/validators/fields/decimal_field_config.py

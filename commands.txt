@@ -2,6 +2,7 @@ source .venv/bin/activate
 .venv/bin/pip install --upgrade build
 .venv/bin/python3 -m build
 
+
 # limpa
 find . -name '*.pyc' -delete
 rm -rf .pytest_cache dist build

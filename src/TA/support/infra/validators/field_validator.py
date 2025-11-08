@@ -184,6 +184,19 @@ class FieldValidator:
                 MessageProvider.get_message(msg_key, {"field": display_name})
             )
 
+     @classmethod
+    def validate_bool(cls, value, display_name, field_config):
+        if not value:
+            raise FieldValidatorException(
+                MessageProvider.get_message("validation.error.empty_field", {"field": display_name})
+        )
+        
+        if not isinstance(value, bool):
+            msg_key = "validation.error.invalid_time"
+            raise FieldValidatorException(
+                MessageProvider.get_message(msg_key, {"field": display_name})
+            )
+
     @classmethod
     def validate_cell_phone(cls, value, display_name, field_config):
         cls.validate_string(value, display_name, field_config)

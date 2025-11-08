@@ -6,6 +6,7 @@
     "validation.error.invalid_datetime": "{field} deve ser uma data/hora válida",
     "validation.error.invalid_date": "{field} deve ser uma data válida",
     "validation.error.invalid_time": "{field} deve ser uma hora válida",
+    "validation.error.invalid_bool": "{field} deve ser um booleano válido",
     "validation.error.invalid_json": "{field} não é um json válido",
     "validation.error.future_date": "{field} não pode ser uma data futura",
     "validation.error.invalid_email": "{field} não é um e-mail válido",

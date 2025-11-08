@@ -6,3 +6,4 @@ from .json_field_config import JsonFieldConfig
 from .str_field_config import StrFieldConfig
 from .int_field_config import IntFieldConfig
 from .time_field_config import TimeFieldConfig
+from .bool_field_config import BoolFieldConfig

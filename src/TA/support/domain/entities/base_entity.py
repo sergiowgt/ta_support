@@ -4,12 +4,9 @@ from typing import Optional
 from uuid import UUID, uuid4
 
 from TA.support.infra.validators.field_validator import FieldValidator
-from TA.support.infra.validators.fields.date_field_config import DateFieldConfig
-from TA.support.infra.validators.fields.datetime_field_config import DateTimeFieldConfig
-from TA.support.infra.validators.fields.decimal_field_config import DecimalFieldConfig
-from TA.support.infra.validators.fields.int_field_config import IntFieldConfig
-from TA.support.infra.validators.fields.json_field_config import JsonFieldConfig
-from TA.support.infra.validators.fields.str_field_config import StrFieldConfig
+from TA.support.infra.validators.fields import ( 
+    DateFieldConfig, DateTimeFieldConfig, DecimalFieldConfig, IntFieldConfig, JsonFieldConfig, StrFieldConfig, BoolFieldConfig
+)
 from TA.support.domain.enums.status_enum import StatusEnum
 from TA.support.infra.validators.field_presets import DATED_BY_FIELD, DATED_AT_FIELD, STATUS_FIELD, UUID_FIELD
 from TA.support.infra.validators.fields.time_field_config import TimeFieldConfig
@@ -66,6 +63,8 @@ class BaseEntity:
             FieldValidator.validate_decimal(value, display_name, field_config)
         elif isinstance(field_config, DateTimeFieldConfig):
             FieldValidator.validate_datetime(value, display_name, field_config)
+        elif isinstance(field_config, BoolFieldConfig):
+             FieldValidator.validate_bool(value, display_name, field_config)
         elif isinstance(field_config, TimeFieldConfig):
             FieldValidator.validate_time(value, display_name, field_config)
         elif isinstance(field_config, DateFieldConfig):

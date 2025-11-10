@@ -184,7 +184,7 @@ class FieldValidator:
                 MessageProvider.get_message(msg_key, {"field": display_name})
             )
 
-     @classmethod
+    @classmethod
     def validate_bool(cls, value, display_name, field_config):
         if not value:
             raise FieldValidatorException(

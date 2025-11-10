@@ -17,11 +17,6 @@ class BaseCrudRouter:
         get_async_uow: Callable,
         verify_call: Callable
     ):
-        self.router = APIRouter(
-            prefix=prefix,
-            tags=tags,
-            dependencies=[Depends(JWTHandler.get_claim_dependency(JWT_CLAIMS["EMAIL"]))]
-        )
 
         self.service_cls = service_cls
         self.create_schema = create_schema
@@ -31,6 +26,11 @@ class BaseCrudRouter:
         self.create_response_schema = create_response_schema
         self.get_async_uow = get_async_uow
         self.verify_call = verify_call if verify_call is not None else JWTHandler.get_claim_dependency(JWT_CLAIMS["EMAIL"])
+        self.router = APIRouter(
+            prefix=prefix,
+            tags=tags,
+            dependencies=[Depends(JWTHandler.get_claim_dependency(JWT_CLAIMS["EMAIL"]))]
+        )
         self.register_routes()
 
     def register_routes(self):

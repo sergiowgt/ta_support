@@ -26,7 +26,8 @@ class GoogleLoginService():
 
     async def login(self, user_repository: ILoginRepository, google_token):
         try:
-            idinfo = google_id_token.verify_oauth2_token(google_token, google_requests.Request(), self.google_login_api_key)
+            #idinfo = google_id_token.verify_oauth2_token(google_token, google_requests.Request(), self.google_login_api_key)
+            idinfo = google_id_token.verify_oauth2_token(google_token, google_requests.Request(), self.google_login_api_key, clock_skew_in_seconds=30)
             email = idinfo.get("email")
             name = idinfo.get("name")
             if not email or not name:

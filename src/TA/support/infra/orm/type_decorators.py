@@ -4,7 +4,8 @@ from sqlalchemy.types import TypeDecorator
 
 class UUIDType(TypeDecorator):
     impl = VARCHAR(36)
-
+    
+    cache_ok = True
     def process_bind_param(self, value, dialect):
         if value is None:
             return value

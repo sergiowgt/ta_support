@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "TA.support"
-version = "2.0.0"
+version = "0.1.1"
 description = "Biblioteca de suporte do Transfero Academy"
 authors = [{name = "Seu Nome", email = "sergio.wellington@email.com"}]
 readme = "README.md"

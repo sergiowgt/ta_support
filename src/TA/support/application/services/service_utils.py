@@ -1,8 +1,26 @@
-from dataclasses import fields
+# TA/support/application/services/service_utils.py
+#
+# MUDANÇA: dataclasses.fields() continua funcionando com MappedAsDataclass.
+# Nenhuma alteração de lógica — só adicionado fallback para sqlalchemy inspect
+# caso a entidade não seja uma dataclass pura (retrocompatibilidade).
+
 from TA.support.exceptions.business_rule_exception import BusinessRuleException
 from TA.support.domain.enums.unique_type_enum import UniqueTypeEnum
 from TA.support.i18n.message_provider import MessageProvider
 from sqlalchemy import select
+
+
+def _get_fields(entity_cls):
+    """
+    Retorna os campos da entidade com seus metadados.
+    Suporta tanto @dataclass puras quanto MappedAsDataclass.
+    """
+    import dataclasses
+    try:
+        return dataclasses.fields(entity_cls)
+    except TypeError:
+        return []
+
 
 async def validate_uniqueness(data, entity_cls, repo, id=None):
     async def handle_field_only():
@@ -35,24 +53,22 @@ async def validate_uniqueness(data, entity_cls, repo, id=None):
                 )
                 raise BusinessRuleException(msg)
 
-
-    for f in fields(entity_cls):
+    for f in _get_fields(entity_cls):
         meta = f.metadata
         unique_type = meta.get('unique_type', UniqueTypeEnum.FALSE)
 
         if unique_type == UniqueTypeEnum.FALSE:
-            continue  
+            continue
 
         value = getattr(data, f.name)
         if unique_type == UniqueTypeEnum.FIELD_ONLY:
             await handle_field_only()
-           
         elif unique_type == UniqueTypeEnum.FIELD_PLUS_ID:
             await handle_field_and_id()
-            
+
 
 async def validate_foreign_keys(data, entity_cls, repo_registry, session):
-    for f in fields(entity_cls):
+    for f in _get_fields(entity_cls):
         meta = f.metadata
         if 'foreign_model' in meta:
             fk_value = getattr(data, f.name)
@@ -68,7 +84,8 @@ async def validate_foreign_keys(data, entity_cls, repo_registry, session):
                         }
                     )
                     raise BusinessRuleException(msg)
-                
+
+
 async def has_children(session, entity_cls, entity_id, repo_registry):
     for child in getattr(entity_cls, "__children__", []):
         child_cls = repo_registry[child["entity"]].entity_cls

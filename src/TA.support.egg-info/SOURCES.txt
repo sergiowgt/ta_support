@@ -41,13 +41,16 @@ src/TA/support/infra/validators/fields/date_field_config.py
 src/TA/support/infra/validators/fields/datetime_field_config.py
 src/TA/support/infra/validators/fields/decimal_field_config.py
 src/TA/support/infra/validators/fields/field_config.py
+src/TA/support/infra/validators/fields/int_enum_field_config.py
 src/TA/support/infra/validators/fields/int_field_config.py
 src/TA/support/infra/validators/fields/json_field_config.py
+src/TA/support/infra/validators/fields/str_enum_field_config.py
 src/TA/support/infra/validators/fields/str_field_config.py
 src/TA/support/infra/validators/fields/time_field_config.py
+src/TA/support/locales/en.json
+src/TA/support/locales/pt_BR.json
 src/TA/support/login/Ilogin_repository.py
 src/TA/support/login/__init__.py
-src/TA/support/login/google_login_config.py
 src/TA/support/login/google_login_service.py
 src/TA/support/repositories/__init__.py
 src/TA/support/repositories/base_repository.py

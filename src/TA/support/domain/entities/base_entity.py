@@ -5,11 +5,10 @@ from uuid import UUID, uuid4
 
 from TA.support.infra.validators.field_validator import FieldValidator
 from TA.support.infra.validators.fields import ( 
-    DateFieldConfig, DateTimeFieldConfig, DecimalFieldConfig, IntFieldConfig, JsonFieldConfig, StrFieldConfig, BoolFieldConfig
+    DateFieldConfig, DateTimeFieldConfig, DecimalFieldConfig, IntFieldConfig, JsonFieldConfig, StrFieldConfig, BoolFieldConfig, IntEnumFieldConfig, StrEnumFieldConfig, TimeFieldConfig
 )
 from TA.support.domain.enums.status_enum import StatusEnum
 from TA.support.infra.validators.field_presets import DATED_BY_FIELD, DATED_AT_FIELD, STATUS_FIELD, UUID_FIELD
-from TA.support.infra.validators.fields.time_field_config import TimeFieldConfig
 
 @dataclass
 class BaseEntity:
@@ -71,6 +70,10 @@ class BaseEntity:
             FieldValidator.validate_date(value, display_name, field_config)
         elif isinstance(field_config, JsonFieldConfig):
             FieldValidator.validate_json(value, display_name, field_config)
+        elif isinstance(field_config, IntEnumFieldConfig): 
+            FieldValidator.validate_enum(value, display_name, field_config)
+        elif isinstance(field_config, StrEnumFieldConfig): 
+            FieldValidator.validate_enum(value, display_name, field_config)
 
     def validate(self):
         for f in fields(self):

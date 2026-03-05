@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-from collections import defaultdict
 
 class MessageProvider:
     _instance = None
@@ -11,20 +10,33 @@ class MessageProvider:
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
-            cls._load_locales()
         return cls._instance
 
     @classmethod
-    def _load_locales(cls, locale_dir: str):
-        path = Path(locale_dir)
-        
-        # Verifica se o diretório existe
-        if not path.exists() or not path.is_dir():
-            raise FileNotFoundError(f"Directory not found: {locale_dir}")
-    
-        for lang_file in locale_dir.glob('*.json'):
-            with open(lang_file, 'r', encoding='utf-8') as f:
-                cls._locales[lang_file.stem] = json.load(f)
+    def _builtin_path(cls) -> Path:
+        # src/TA/support/i18n/message_provider.py
+        # → parent = i18n/
+        # → parent.parent = support/
+        # → / locales
+        return Path(__file__).parent.parent / "locales"
+
+    @classmethod
+    def _load_locales(cls, *extra_dirs):
+        """
+        Carrega o locale da biblioteca automaticamente.
+        O backend pode passar paths adicionais — o último vence em chaves duplicadas.
+
+        Uso no main.py do backend:
+            MessageProvider._load_locales("src/locales")
+        """
+        all_dirs = [cls._builtin_path(), *[Path(d) for d in extra_dirs]]
+        merged = {}
+        for path in all_dirs:
+            lang_file = path / f"{cls._current_lang}.json"
+            if lang_file.exists():
+                with open(lang_file, 'r', encoding='utf-8') as f:
+                    merged.update(json.load(f))
+        cls._locales[cls._current_lang] = merged
 
     @classmethod
     def set_language(cls, lang: str):
@@ -40,15 +52,11 @@ class MessageProvider:
 
     @classmethod
     def get_message(cls, key: str, params: dict = None) -> str:
-        # Tenta buscar no idioma atual
         messages = cls._locales.get(cls._current_lang, {})
         message = messages.get(key)
-        # Fallback para o idioma padrão
         if message is None:
             messages = cls._locales.get(cls._default_lang, {})
-            message = messages.get(key, key)  # Fallback para a chave
-
-        # Interpolação segura
+            message = messages.get(key, key)
         if params:
             class SafeDict(dict):
                 def __missing__(self, k):

@@ -468,3 +468,27 @@ class FieldValidator:
                     {"field": display_name, "value": value}
                 )
             )
+            
+    @staticmethod
+    def validate_enum(value, display_name, field_config):
+        enum_cls = field_config.enum_cls
+        required = getattr(field_config, "required", True)
+
+        if value is None or value == "":
+            if required:
+                raise FieldValidatorException(
+                    MessageProvider.get_message(
+                        "validation.error.empty_field",
+                        {"field": display_name}
+                    )
+                )
+            return  # opcional e None/vazio → OK
+
+        valid_values = [e.value for e in enum_cls]
+        if value not in valid_values:
+            raise FieldValidatorException(
+                MessageProvider.get_message(
+                    "validation.error.invalid_enum_value",
+                    {"field": display_name, "value": value}
+                )
+            )

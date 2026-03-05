@@ -10,14 +10,22 @@ authors = [{name = "Seu Nome", email = "sergio.wellington@email.com"}]
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
- "sqlalchemy>=2.0"
+    "fastapi",
+    "pyjwt",
+    "python-dotenv",
+    "sqlalchemy[asyncio]>=2.0",
+    "google-auth",
+    "python-dateutil"
 ]
 license = {file = "LICENSE"}
 classifiers = [
-  "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: MIT License",
-  "Operating System :: OS Independent"
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
 ]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+"TA.support" = ["locales/*.json"]  # ← inclui o json no pacote

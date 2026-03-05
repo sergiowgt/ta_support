@@ -14,4 +14,14 @@ for f in /Users/sergiosousa/TA.support/src/TA/support/domain/entities/*.py; do
   echo "" >> resultado.txt
 done
 
-find src -type f -name '*.py' -exec sh -c 'echo "# Arquivo: {}"; cat {}; echo; echo' \; > codigo_python.txt
+find src -type f -name '*.py' -exec sh -c 'echo "# Arquivo: {}"; cat {}; echo; echo' \; > ta_code.txt
+
+pip install \
+  fastapi \
+  pyjwt \
+  python-dotenv \
+  sqlalchemy[asyncio] \
+  google-auth \
+  python-dateutil
+
+  pip freeze > requirements.txt

@@ -1,6 +1,7 @@
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any, List, Optional
 from TA.support.domain.contracts.inamed_repository import INamedRepository
+from TA.support.domain.contracts.iservice import TEntity
 from TA.support.infra.database.idb_handler import IDbHandler
 from .base_repository import BaseRepository
 from ..domain.entities.named_base_entity import NamedBaseEntity
@@ -20,15 +21,21 @@ class NamedRepository(BaseRepository, INamedRepository):
         result = await self._session.execute(query)
         return result.scalars().first()
     
-    async def get_all(self, only_active=True, name_like=None, page=1, page_size=20):
-        query = select(self._entity)
+    async def get_all(
+        self,
+        only_active: bool = True,
+        name_like: Optional[str] = None,
+        page: int = 1,
+        page_size: int = 20,
+    ) -> List[TEntity]:
+        
+        query = select(self._entity_cls)
         if only_active:
-            query = query.where(self._entity.status == StatusEnum.ACTIVE.value)
+            query = query.where(self._entity_cls.status == StatusEnum.ACTIVE.value)
         else:
-            query = query.where(self._entity.status != StatusEnum.LOGICALLY_DELETED.value)
+            query = query.where(self._entity_cls.status != StatusEnum.LOGICALLY_DELETED.value)
         if name_like:
-            query = query.where(self._entity.name.ilike(f"%{name_like}%"))
+            query = query.where(self._entity_cls.name.ilike(f"%{name_like}%"))
         query = query.offset((page - 1) * page_size).limit(page_size)
         result = await self._session.execute(query)
-        return result.scalars().all()
-
+        return list(result.scalars().all())

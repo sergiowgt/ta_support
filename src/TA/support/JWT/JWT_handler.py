@@ -14,14 +14,6 @@ bearer_scheme = HTTPBearer()
 
 class JWTHandler:
     @staticmethod
-    def create_access_token(data: dict) -> str:
-        to_encode = data.copy()
-        expire = datetime.utcnow() + JWTConfig.get_expiration_delta()
-        to_encode.update({"exp": expire})
-        encoded_jwt = jwt.encode(to_encode, JWTConfig.SECRET_KEY, algorithm=JWTConfig.ALGORITHM)
-        return encoded_jwt
-
-    @staticmethod
     def decode_token(token: str) -> dict:
         try:
             payload = jwt.decode(token, JWTConfig.SECRET_KEY, algorithms=[JWTConfig.ALGORITHM])
@@ -53,11 +45,8 @@ class JWTHandler:
     @staticmethod
     def create_access_token(data: dict) -> str:
         to_encode = data.copy()
-        expire = datetime.now(timezone.utc) + timedelta(minutes=JWTConfig.ACCESS_TOKEN_EXPIRE_MINUTES)
-        to_encode.update({"exp": expire})
-        encoded_jwt = jwt.encode(
-            to_encode,
-            JWTConfig.SECRET_KEY,
-            algorithm=JWTConfig.ALGORITHM
+        expire = datetime.now(timezone.utc) + timedelta(
+            minutes=JWTConfig.ACCESS_TOKEN_EXPIRE_MINUTES
         )
-        return encoded_jwt
+        to_encode["exp"] = expire
+        return jwt.encode(to_encode, JWTConfig.SECRET_KEY, algorithm=JWTConfig.ALGORITHM)

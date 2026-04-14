@@ -20,10 +20,19 @@ async def validate_uniqueness(data, entity_cls, repo, id=None):
                 )
                 raise BusinessRuleException(msg)
 
-    async def handle_field_and_id():
-        get_by_method = getattr(repo, f"get_by_id_and_{f.name}", None)
+    async def handle_field_scoped():
+        scope_field = meta.get('unique_scope')
+        if not scope_field:
+            return
+
+        scope_value = getattr(data, scope_field, None)
+        if scope_value is None:
+            return
+
+        method_name = f"get_by_{f.name}_and_{scope_field}"
+        get_by_method = getattr(repo, method_name, None)
         if get_by_method:
-            existing = await get_by_method(id, value)
+            existing = await get_by_method(value, scope_value)
             if existing and (id is None or existing.id != id):
                 msg = MessageProvider.get_message(
                     "validation.error.duplicated_field",
@@ -41,14 +50,14 @@ async def validate_uniqueness(data, entity_cls, repo, id=None):
         unique_type = meta.get('unique_type', UniqueTypeEnum.FALSE)
 
         if unique_type == UniqueTypeEnum.FALSE:
-            continue  
+            continue
 
         value = getattr(data, f.name)
         if unique_type == UniqueTypeEnum.FIELD_ONLY:
             await handle_field_only()
-           
+
         elif unique_type == UniqueTypeEnum.FIELD_PLUS_ID:
-            await handle_field_and_id()
+            await handle_field_scoped()
             
 
 async def validate_foreign_keys(data, entity_cls, repo_registry, session):

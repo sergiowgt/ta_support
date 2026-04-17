@@ -66,6 +66,9 @@ venv.bak/
 # Notebooks Jupyter
 .ipynb_checkpoints
 
+# Diretórios gerados localmente
+$dest/
+
 # Outros
 *.log
 local_settings.py

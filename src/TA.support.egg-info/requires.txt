@@ -1,6 +1,0 @@
-fastapi
-pyjwt
-python-dotenv
-sqlalchemy[asyncio]>=2.0
-google-auth
-python-dateutil

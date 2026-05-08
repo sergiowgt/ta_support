@@ -50,7 +50,8 @@ def valid_value_for(field_config: Any) -> Any:
         if validator and validator in _VALIDATOR_VALID_EXAMPLES:
             return _VALIDATOR_VALID_EXAMPLES[validator]
         if validator == FieldValidator.validate_uuid:
-            return uuid4()  # UUID object, não string
+            # UUID fixo determinístico — codegen precisa de output estável entre runs
+            return UUID("00000000-0000-0000-0000-000000000001")
         # Sem validator: gera string com tamanho mínimo
         min_len = getattr(field_config, "min_len", 0) or 1
         return "a" * min_len

@@ -33,7 +33,7 @@ from TA.support.testing._scenarios import (
 from TA.support.testing._value_factory import repr_value, valid_value_for
 
 
-CODEGEN_VERSION = "1.2.0"
+CODEGEN_VERSION = "1.3.0"
 
 
 _HEADER = '''"""Camada 0 — Testes de Invariância pra {entity_name}.

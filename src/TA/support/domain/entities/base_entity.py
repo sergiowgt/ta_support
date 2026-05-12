@@ -86,9 +86,8 @@ class BaseEntity:
             if callable(validator_fn):
                 validator_fn(value, display_name, field_config)
                 continue
- 
-            if required:
-                self.call_default_validators(field_config, display_name, value)
+
+            self.call_default_validators(field_config, display_name, value)
               
         if self.updated_at:
             FieldValidator.validate_datetime(self.updated_at, self._get_display_name('updated_at'), DATED_AT_FIELD)

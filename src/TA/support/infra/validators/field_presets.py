@@ -1,5 +1,5 @@
 from TA.support.infra.validators.field_validator import FieldValidator
-from TA.support.infra.validators.fields import StrFieldConfig, DateFieldConfig, IntFieldConfig
+from TA.support.infra.validators.fields import StrFieldConfig, DateFieldConfig, DateTimeFieldConfig, IntFieldConfig
 
 
 # StrEnum — max_len explícito, independente dos valores do enum
@@ -16,4 +16,4 @@ EMAIL_FIELD = StrFieldConfig(min_len=0, max_len=255, validator=FieldValidator.va
 STATUS_FIELD = IntFieldConfig(validator=FieldValidator.validate_status)
 NAME_FIELD = StrFieldConfig(max_len=100)
 DATED_BY_FIELD = StrFieldConfig(max_len=50)
-DATED_AT_FIELD = DateFieldConfig() 
+DATED_AT_FIELD = DateTimeFieldConfig() 

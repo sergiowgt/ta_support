@@ -22,6 +22,16 @@ from TA.support.infra.validators.field_validator import FieldValidator
 Scenario = Tuple[str, str]
 
 
+def _safe_id(value: Any) -> str:
+    """Sanitiza valor pra usar em nome de função Python.
+
+    `0.0` vira `0_0`, `-1.5` vira `_1_5`. Evita SyntaxError gerado por
+    decimal literal embutido no nome (bug histórico: `below_min_0.0_raises`
+    quebra collection do pytest com 'invalid decimal literal').
+    """
+    return str(value).replace(".", "_").replace("-", "_")
+
+
 def generate_field_scenarios(field_obj) -> List[Scenario]:
     """Pra um field, retorna cenários de teste a gerar.
 
@@ -89,11 +99,11 @@ def generate_field_scenarios(field_obj) -> List[Scenario]:
         max_value = getattr(cfg, "max_value", None)
         if min_value is not None:
             scenarios.append(
-                (f"below_min_{min_value}_raises", str(min_value - 1))
+                (f"below_min_{_safe_id(min_value)}_raises", str(min_value - 1))
             )
         if max_value is not None:
             scenarios.append(
-                (f"above_max_{max_value}_raises", str(max_value + 1))
+                (f"above_max_{_safe_id(max_value)}_raises", str(max_value + 1))
             )
 
     # DecimalFieldConfig
@@ -103,14 +113,14 @@ def generate_field_scenarios(field_obj) -> List[Scenario]:
         if min_value is not None:
             scenarios.append(
                 (
-                    f"below_min_{min_value}_raises",
+                    f"below_min_{_safe_id(min_value)}_raises",
                     f"Decimal('{min_value - 1}')",
                 )
             )
         if max_value is not None:
             scenarios.append(
                 (
-                    f"above_max_{max_value}_raises",
+                    f"above_max_{_safe_id(max_value)}_raises",
                     f"Decimal('{max_value + 1}')",
                 )
             )

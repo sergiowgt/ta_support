@@ -6,7 +6,7 @@ from TA.support.exceptions import LoginException
 
 # google_login_service.py — lógica de verificação centralizada
 class GoogleLoginService:
-    _CLOCK_SKEW = 30
+    _CLOCK_SKEW = 60
     
     def __init__(self, google_login_api_key: str):
         self.google_login_api_key: str = google_login_api_key 

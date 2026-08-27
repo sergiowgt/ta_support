@@ -41,5 +41,10 @@
   "auth.error.user_not_exists": "Usuário não encontrado no sistema",
   "auth.error.google_token_empty": "O token do Google não pode estar vazio",
   "auth.error.google_token_invalid": "Token do Google inválido ou expirado: {reason}",
-  "auth.error.google_token_missing_claims": "Token não contém email e nome"
+  "auth.error.google_token_missing_claims": "Token não contém email e nome",
+  "verification.error.not_found": "Nenhum código de verificação ativo. Solicite um novo.",
+  "verification.error.expired": "O código de verificação expirou. Solicite um novo.",
+  "verification.error.max_attempts": "Número máximo de tentativas excedido. Solicite um novo código.",
+  "verification.error.invalid_code": "Código de verificação inválido.",
+  "verification.error.resend_cooldown": "Aguarde {seconds}s para solicitar um novo código."
 }

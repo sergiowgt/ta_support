@@ -17,5 +17,10 @@
     "validation.error.password_numeric": "{field} deve conter pelo menos um número",
     "validation.error.password_alpha": "{field} deve conter pelo menos uma letra",
     "validation.error.password_uppercase": "{field} deve conter pelo menos uma letra maiúscula",
-    "validation.error.password_special": "{field} deve conter pelo menos um caractere especial"
+    "validation.error.password_special": "{field} deve conter pelo menos um caractere especial",
+    "verification.error.not_found": "No active verification code. Request a new one.",
+    "verification.error.expired": "The verification code has expired. Request a new one.",
+    "verification.error.max_attempts": "Maximum number of attempts exceeded. Request a new code.",
+    "verification.error.invalid_code": "Invalid verification code.",
+    "verification.error.resend_cooldown": "Wait {seconds}s to request a new code."
 }
